@@ -1,0 +1,63 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Noto Sans Ethiopic', 'Yanone Kaffeesatz', 'Chilanka', sans-serif;
+  --color-paper: #fbf9f4;
+}
+
+body {
+  background-color: var(--color-paper);
+  @apply text-stone-800 antialiased;
+}
+
+::selection {
+  @apply bg-amber-200;
+}
+
+.handwritten-border {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+/* Flashcard 3D flip */
+.flip-card {
+  perspective: 1200px;
+}
+.flip-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+.flip-card.flipped .flip-inner {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+/* Lesson markdown content */
+.lesson-content h2 {
+  @apply text-2xl font-black text-stone-900 mt-8 mb-3;
+}
+.lesson-content p {
+  @apply text-stone-700 leading-relaxed mb-4 text-lg;
+}
+.lesson-content ul {
+  @apply list-disc pl-6 mb-4 space-y-2 text-stone-700 text-lg;
+}
+.lesson-content strong {
+  @apply font-bold text-amber-800;
+}
+.lesson-content table {
+  @apply w-full border-collapse mb-6 text-base;
+}
+.lesson-content th {
+  @apply bg-stone-800 text-amber-50 px-4 py-2 text-left font-bold;
+}
+.lesson-content td {
+  @apply border-b border-stone-200 px-4 py-2;
+}
+.lesson-content del {
+  @apply text-stone-400;
+}
