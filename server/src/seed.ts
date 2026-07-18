@@ -2,7 +2,6 @@ import { db } from './db.js'
 import { vocabulary, lessons } from './seedData.js'
 import bcrypt from 'bcryptjs'
 
-
 export function seedDatabase(): void {
   const vocabCount = (db.prepare('SELECT COUNT(*) AS c FROM vocabulary').get() as { c: number }).c
   if (vocabCount === 0) {
@@ -29,15 +28,13 @@ export function seedDatabase(): void {
     insertMany()
     console.log(`Seeded ${lessons.length} lessons`)
   }
-  const userCount = (db.prepare('SELECT COUNT(*) AS c FROM users').get() as { c: number }).c
-  if (userCount === 0) {
     const hash = bcrypt.hashSync(process.env.DEMO_PASSWORD || 'demo1234', 10)
-    db.prepare('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)')
-      .run('Demo User', 'demo@example.com', hash)
-    console.log('Seeded demo user')
-  }
-
-  
+    db.prepare(`
+      INSERT INTO users (name, email, password_hash)
+      VALUES ('Demo User', 'demo@example.com', ?)
+      ON CONFLICT (email) DO UPDATE SET password_hash = excluded.password_hash
+    `).run(hash)
+    console.log('Demo user ready')
 }
 
 
