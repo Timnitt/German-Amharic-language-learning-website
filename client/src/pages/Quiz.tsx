@@ -55,13 +55,13 @@ export default function Quiz() {
   if (phase === 'setup') {
     return (
       <div className="max-w-xl mx-auto px-6 py-16 text-center">
-        <h1 className="text-3xl font-black text-stone-900 mb-3">የቃላት ፈተና</h1>
-        <p className="text-stone-500 font-medium mb-10">
+        <h1 className="text-3xl font-black text-gray-900 mb-3">የቃላት ፈተና</h1>
+        <p className="text-gray-500 font-medium mb-10">
           10 የምርጫ ጥያቄዎች — ጀርመንኛ ወደ አማርኛ እና አማርኛ ወደ ጀርመንኛ።
         </p>
 
-        <div className="bg-paper border-2 border-stone-300 handwritten-border p-8">
-          <p className="font-bold text-stone-700 mb-4">ደረጃ ይምረጡ፦</p>
+        <div className="bg-paper border-2 border-gray-300 handwritten-border p-8">
+          <p className="font-bold text-gray-700 mb-4">ደረጃ ይምረጡ፦</p>
           <div className="flex justify-center gap-3 mb-8">
             {(['A1', 'A2', 'B1'] as Level[]).map((l) => (
               <button
@@ -69,8 +69,8 @@ export default function Quiz() {
                 onClick={() => setLevel(l)}
                 className={`px-6 py-3 rounded-xl font-bold border-2 transition cursor-pointer ${
                   level === l
-                    ? 'bg-stone-800 text-amber-50 border-stone-800'
-                    : 'bg-white text-stone-600 border-stone-300 hover:border-stone-500'
+                    ? 'bg-gray-800 text-blue-50 border-gray-800'
+                    : 'bg-white text-gray-600 border-gray-300 hover:border-gray-500'
                 }`}
               >
                 {l}
@@ -79,14 +79,14 @@ export default function Quiz() {
           </div>
           <button
             onClick={start}
-            className="w-full bg-amber-700 text-white font-bold text-lg py-4 rounded-xl hover:bg-amber-800 transition cursor-pointer"
+            className="w-full bg-blue-700 text-white font-bold text-lg py-4 rounded-xl hover:bg-blue-800 transition cursor-pointer"
           >
             ፈተናውን ጀምር
           </button>
           {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
           {!user && (
-            <p className="mt-6 text-sm text-stone-500">
-              💡 ውጤትዎ እንዲመዘገብ <Link to="/login" className="font-bold text-amber-800 underline">ይግቡ</Link>።
+            <p className="mt-6 text-sm text-gray-500">
+              💡 ውጤትዎ እንዲመዘገብ <Link to="/login" className="font-bold text-blue-800 underline">ይግቡ</Link>።
             </p>
           )}
         </div>
@@ -98,26 +98,26 @@ export default function Quiz() {
     const pct = Math.round((score / questions.length) * 100)
     return (
       <div className="max-w-xl mx-auto px-6 py-16 text-center">
-        <div className="bg-paper border-2 border-stone-300 handwritten-border p-10">
+        <div className="bg-paper border-2 border-gray-300 handwritten-border p-10">
           <div className="text-5xl mb-4">{pct >= 80 ? '🏆' : pct >= 50 ? '👏' : '💪'}</div>
-          <h1 className="text-3xl font-black text-stone-900 mb-2">ውጤትዎ</h1>
-          <p className="text-6xl font-black text-amber-700 my-6">
+          <h1 className="text-3xl font-black text-gray-900 mb-2">ውጤትዎ</h1>
+          <p className="text-6xl font-black text-blue-700 my-6">
             {score}/{questions.length}
           </p>
-          <p className="text-stone-600 mb-8 text-lg">
+          <p className="text-gray-600 mb-8 text-lg">
             {pct >= 80 ? 'እጅግ በጣም ጥሩ! (Sehr gut!)' : pct >= 50 ? 'ጥሩ ሙከራ! መለማመዱን ይቀጥሉ።' : 'ተስፋ አይቁረጡ — ፍላሽ ካርዶችን ይለማመዱ!'}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => setPhase('setup')}
-              className="bg-amber-700 text-white font-bold px-6 py-3 rounded-xl hover:bg-amber-800 transition cursor-pointer"
+              className="bg-blue-700 text-white font-bold px-6 py-3 rounded-xl hover:bg-blue-800 transition cursor-pointer"
             >
               እንደገና ይሞክሩ
             </button>
             {user && (
               <Link
                 to="/dashboard"
-                className="bg-stone-800 text-amber-50 font-bold px-6 py-3 rounded-xl hover:bg-stone-700 transition"
+                className="bg-gray-800 text-blue-50 font-bold px-6 py-3 rounded-xl hover:bg-gray-700 transition"
               >
                 ዳሽቦርድ ይመልከቱ
               </Link>
@@ -130,33 +130,33 @@ export default function Quiz() {
 
   return (
     <div className="max-w-xl mx-auto px-6 py-12">
-      <div className="flex justify-between items-center mb-6 text-sm font-bold text-stone-500">
+      <div className="flex justify-between items-center mb-6 text-sm font-bold text-gray-500">
         <span>
           ጥያቄ {index + 1} / {questions.length}
         </span>
         <span>ነጥብ፦ {score}</span>
       </div>
-      <div className="h-2 bg-stone-200 rounded-full mb-8 overflow-hidden">
+      <div className="h-2 bg-gray-200 rounded-full mb-8 overflow-hidden">
         <div
-          className="h-full bg-amber-600 rounded-full transition-all"
+          className="h-full bg-blue-600 rounded-full transition-all"
           style={{ width: `${(index / questions.length) * 100}%` }}
         />
       </div>
 
-      <div className="bg-paper border-2 border-stone-300 handwritten-border p-8 mb-6 text-center">
-        <span className="text-xs font-bold uppercase tracking-widest text-amber-700">
+      <div className="bg-paper border-2 border-gray-300 handwritten-border p-8 mb-6 text-center">
+        <span className="text-xs font-bold uppercase tracking-widest text-blue-700">
           {question.direction === 'de-am' ? 'ወደ አማርኛ ተርጉም' : 'ወደ ጀርመንኛ ተርጉም'}
         </span>
-        <h2 className="text-4xl font-black text-stone-900 mt-3">{question.prompt}</h2>
+        <h2 className="text-4xl font-black text-gray-900 mt-3">{question.prompt}</h2>
       </div>
 
       <div className="space-y-3">
         {question.options.map((option, i) => {
-          let style = 'bg-white border-stone-300 hover:border-amber-600 text-stone-800'
+          let style = 'bg-white border-gray-300 hover:border-blue-600 text-gray-800'
           if (selected !== null) {
             if (i === question.answer) style = 'bg-green-50 border-green-500 text-green-800'
             else if (i === selected) style = 'bg-red-50 border-red-400 text-red-700'
-            else style = 'bg-white border-stone-200 text-stone-400'
+            else style = 'bg-white border-gray-200 text-gray-400'
           }
           return (
             <button
@@ -172,7 +172,7 @@ export default function Quiz() {
       </div>
 
       {selected !== null && question.example && (
-        <p className="mt-6 text-center text-stone-500 italic">ምሳሌ፦ „{question.example}“</p>
+        <p className="mt-6 text-center text-gray-500 italic">ምሳሌ፦ „{question.example}“</p>
       )}
     </div>
   )

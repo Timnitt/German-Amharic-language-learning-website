@@ -67,8 +67,8 @@ export default function Flashcards() {
     <div className="max-w-2xl mx-auto px-6 py-12">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-black text-stone-900 mb-1">ፍላሽ ካርዶች</h1>
-          <p className="text-stone-500 font-medium">ካርዱን ይንኩ — ትርጉሙን ያዩ።</p>
+          <h1 className="text-3xl font-black text-gray-900 mb-1">ፍላሽ ካርዶች</h1>
+          <p className="text-gray-500 font-medium">ካርዱን ይንኩ — ትርጉሙን ያዩ።</p>
         </div>
         <div className="flex gap-2">
           {(['A1', 'A2', 'B1'] as Level[]).map((l) => (
@@ -77,8 +77,8 @@ export default function Flashcards() {
               onClick={() => setLevel(l)}
               className={`px-4 py-2 rounded-xl font-bold text-sm border-2 transition cursor-pointer ${
                 level === l
-                  ? 'bg-stone-800 text-amber-50 border-stone-800'
-                  : 'bg-white text-stone-600 border-stone-300 hover:border-stone-500'
+                  ? 'bg-gray-800 text-blue-50 border-gray-800'
+                  : 'bg-white text-gray-600 border-gray-300 hover:border-gray-500'
               }`}
             >
               {l}
@@ -88,38 +88,38 @@ export default function Flashcards() {
       </div>
 
       {!user && (
-        <p className="mb-6 text-sm text-stone-500 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-          💡 <Link to="/login" className="font-bold text-amber-800 underline">ከገቡ</Link> እድገትዎ
+        <p className="mb-6 text-sm text-gray-500 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+          💡 <Link to="/login" className="font-bold text-blue-800 underline">ከገቡ</Link> እድገትዎ
           ተመዝግቦ በዳሽቦርድ ላይ ይታያል።
         </p>
       )}
 
       {loading ? (
-        <div className="py-24 text-center text-stone-400 text-lg">በመጫን ላይ…</div>
+        <div className="py-24 text-center text-gray-400 text-lg">በመጫን ላይ…</div>
       ) : done ? (
-        <div className="text-center py-12 bg-paper border-2 border-stone-300 handwritten-border">
+        <div className="text-center py-12 bg-paper border-2 border-gray-300 handwritten-border">
           <div className="text-5xl mb-4">🎉</div>
-          <h2 className="text-2xl font-black text-stone-900 mb-2">ጨርሰዋል!</h2>
-          <p className="text-stone-600 mb-6">
+          <h2 className="text-2xl font-black text-gray-900 mb-2">ጨርሰዋል!</h2>
+          <p className="text-gray-600 mb-6">
             ያወቁት፦ <span className="font-bold text-green-700">{known}</span> · ያላወቁት፦{' '}
             <span className="font-bold text-red-700">{unknown}</span>
           </p>
           <button
             onClick={restart}
-            className="bg-amber-700 text-white font-bold px-6 py-3 rounded-xl hover:bg-amber-800 transition cursor-pointer"
+            className="bg-blue-700 text-white font-bold px-6 py-3 rounded-xl hover:bg-blue-800 transition cursor-pointer"
           >
             እንደገና ጀምር
           </button>
         </div>
       ) : card ? (
         <>
-          <div className="h-2 bg-stone-200 rounded-full mb-6 overflow-hidden">
+          <div className="h-2 bg-gray-200 rounded-full mb-6 overflow-hidden">
             <div
-              className="h-full bg-amber-600 rounded-full transition-all"
+              className="h-full bg-blue-600 rounded-full transition-all"
               style={{ width: `${progressPct}%` }}
             />
           </div>
-          <p className="text-center text-sm text-stone-400 mb-4">
+          <p className="text-center text-sm text-gray-400 mb-4">
             ካርድ {index + 1} / {cards.length}
           </p>
 
@@ -128,23 +128,23 @@ export default function Flashcards() {
             onClick={() => setFlipped((f) => !f)}
           >
             <div className="flip-inner relative h-72">
-              <div className="flip-face absolute inset-0 bg-paper border-2 border-stone-300 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm">
-                <span className="text-xs font-bold uppercase tracking-widest text-amber-700 mb-4">
+              <div className="flip-face absolute inset-0 bg-paper border-2 border-gray-300 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm">
+                <span className="text-xs font-bold uppercase tracking-widest text-blue-700 mb-4">
                   ጀርመንኛ
                 </span>
-                <span className="text-4xl font-black text-stone-900 text-center">{card.german}</span>
-                <span className="mt-6 text-sm text-stone-400">ለመገልበጥ ይንኩ ↻</span>
+                <span className="text-4xl font-black text-gray-900 text-center">{card.german}</span>
+                <span className="mt-6 text-sm text-gray-400">ለመገልበጥ ይንኩ ↻</span>
               </div>
-              <div className="flip-face flip-back absolute inset-0 bg-stone-800 text-amber-50 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm">
-                <span className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-4">
+              <div className="flip-face flip-back absolute inset-0 bg-gray-800 text-blue-50 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm">
+                <span className="text-xs font-bold uppercase tracking-widest text-blue-400 mb-4">
                   አማርኛ
                 </span>
                 <span className="text-4xl font-black text-center">{card.amharic}</span>
                 {card.pronunciation && (
-                  <span className="mt-3 text-amber-200/80">አነባበብ፦ {card.pronunciation}</span>
+                  <span className="mt-3 text-blue-200/80">አነባበብ፦ {card.pronunciation}</span>
                 )}
                 {card.example_de && (
-                  <span className="mt-4 text-sm text-stone-300 italic text-center">
+                  <span className="mt-4 text-sm text-gray-300 italic text-center">
                     „{card.example_de}“
                   </span>
                 )}
@@ -168,7 +168,7 @@ export default function Flashcards() {
           </div>
         </>
       ) : (
-        <div className="py-24 text-center text-stone-400 text-lg">ለዚህ ደረጃ ቃላት የሉም።</div>
+        <div className="py-24 text-center text-gray-400 text-lg">ለዚህ ደረጃ ቃላት የሉም።</div>
       )}
     </div>
   )

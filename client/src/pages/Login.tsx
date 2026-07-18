@@ -38,32 +38,32 @@ export default function Login() {
 
   return (
     <div className="max-w-md mx-auto px-6 py-16">
-      <div className="bg-paper border-2 border-stone-300 handwritten-border p-8">
-        <h1 className="text-3xl font-black text-stone-900 mb-2 text-center">እንኳን ደህና መጡ!</h1>
-        <p className="text-stone-500 text-center mb-8">ወደ መለያዎ ይግቡ።</p>
+      <div className="bg-paper border-2 border-gray-300 handwritten-border p-8">
+        <h1 className="text-3xl font-black text-gray-900 mb-2 text-center">እንኳን ደህና መጡ!</h1>
+        <p className="text-gray-500 text-center mb-8">ወደ መለያዎ ይግቡ።</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-bold text-stone-700 mb-1">ኢሜይል</label>
+            <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-1">ኢሜይል</label>
             <input
               id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border-2 border-stone-300 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:border-amber-600"
+              className="w-full border-2 border-gray-300 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:border-blue-600"
               placeholder="you@example.com"
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-bold text-stone-700 mb-1">የይለፍ ቃል</label>
+            <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-1">የይለፍ ቃል</label>
             <input
               id="password"
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border-2 border-stone-300 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:border-amber-600"
+              className="w-full border-2 border-gray-300 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:border-blue-600"
               placeholder="••••••••"
             />
           </div>
@@ -73,7 +73,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full bg-amber-700 text-white font-bold py-3.5 rounded-xl hover:bg-amber-800 transition disabled:opacity-50 cursor-pointer"
+            className="w-full bg-blue-700 text-white font-bold py-3.5 rounded-xl hover:bg-blue-800 transition disabled:opacity-50 cursor-pointer"
           >
             {busy ? 'በመግባት ላይ…' : 'ግባ'}
           </button>
@@ -81,13 +81,13 @@ export default function Login() {
           <button
           onClick={demoLogin}
           disabled={busy}
-          className="mt-3 w-full bg-stone-800 text-amber-50 font-bold py-3.5 rounded-xl hover:bg-stone-700 transition disabled:opacity-50 cursor-pointer">
+          className="mt-3 w-full bg-gray-800 text-blue-50 font-bold py-3.5 rounded-xl hover:bg-gray-700 transition disabled:opacity-50 cursor-pointer">
           🎯 በሙከራ መለያ ይሞክሩ (Try Demo)
         </button>
 
-        <p className="mt-6 text-center text-sm text-stone-500">
+        <p className="mt-6 text-center text-sm text-gray-500">
           መለያ የለዎትም?{' '}
-          <Link to="/register" className="font-bold text-amber-700 underline">
+          <Link to="/register" className="font-bold text-blue-700 underline">
             ነፃ ይመዝገቡ
           </Link>
         </p>

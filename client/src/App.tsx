@@ -15,7 +15,7 @@ import Register from './pages/Register'
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth()
   if (loading) {
-    return <div className="py-24 text-center text-stone-400 text-lg">በመጫን ላይ…</div>
+    return <div className="py-24 text-center text-gray-400 text-lg">በመጫን ላይ…</div>
   }
   if (!user) return <Navigate to="/login" replace />
   return <>{children}</>
