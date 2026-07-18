@@ -6,7 +6,7 @@ import type { VocabMeta } from '../types'
 
 const features = [
   {
-    to: '/vocabulary',
+    to: '/lessons/vocabulary',
     emoji: '📚',
     tag: 'የቃላት ማከማቻ',
     title: 'የቃላት ዝርዝር',
@@ -47,9 +47,16 @@ export default function Home() {
 
   return (
     <>
-      <section className="max-w-4xl mx-auto text-center px-6 py-20">
+      <section className="relative overflow-hidden">
+        <img
+          src="/home-bg.svg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none"
+        />
+        <div className="relative max-w-4xl mx-auto text-center px-6 py-20">
         <span className="inline-block bg-blue-100 text-blue-900 font-semibold px-4 py-1.5 rounded-full text-xs uppercase tracking-wider mb-4 handwritten-border border border-blue-200">
-          ነፃ የቋንቋ መማሪያ መድረክ
+          የቋንቋ መማሪያ መድረክ
         </span>
         <h1 className="text-4xl sm:text-6xl font-black text-gray-900 tracking-tight mb-6 leading-tight">
           የጀርመንኛ ቋንቋ በቀላሉ ይማሩ!
@@ -74,6 +81,7 @@ export default function Home() {
             </Link>
           )}
         </div>
+      </div>
       </section>
 
       <section className="bg-gray-100/60 border-t-2 border-b-2 border-gray-200/40 py-20">

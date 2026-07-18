@@ -3,7 +3,6 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../AuthContext'
 
 const navItems = [
-  { to: '/vocabulary', label: 'ቃላት' },
   { to: '/flashcards', label: 'ካርዶች' },
   { to: '/quiz', label: 'ፈተና' },
   { to: '/lessons', label: 'ትምህርቶች' },

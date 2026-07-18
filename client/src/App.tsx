@@ -26,11 +26,12 @@ export default function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/vocabulary" element={<Vocabulary />} />
         <Route path="/flashcards" element={<Flashcards />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/lessons" element={<Lessons />} />
+        <Route path="/lessons/vocabulary" element={<Vocabulary />} />
         <Route path="/lessons/:id" element={<LessonDetail />} />
+        <Route path="/vocabulary" element={<Navigate to="/lessons/vocabulary" replace />} />
         <Route
           path="/dashboard"
           element={
