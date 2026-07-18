@@ -23,6 +23,18 @@ export default function Login() {
       setBusy(false)
     }
   }
+    async function demoLogin() {
+    setError('')
+    setBusy(true)
+    try {
+      await login('demo@example.com', 'demo1234')
+      navigate('/dashboard')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'መግባት አልተቻለም')
+    } finally {
+      setBusy(false)
+    }
+  }
 
   return (
     <div className="max-w-md mx-auto px-6 py-16">
@@ -66,6 +78,12 @@ export default function Login() {
             {busy ? 'በመግባት ላይ…' : 'ግባ'}
           </button>
         </form>
+          <button
+          onClick={demoLogin}
+          disabled={busy}
+          className="mt-3 w-full bg-stone-800 text-amber-50 font-bold py-3.5 rounded-xl hover:bg-stone-700 transition disabled:opacity-50 cursor-pointer">
+          🎯 በሙከራ መለያ ይሞክሩ (Try Demo)
+        </button>
 
         <p className="mt-6 text-center text-sm text-stone-500">
           መለያ የለዎትም?{' '}
