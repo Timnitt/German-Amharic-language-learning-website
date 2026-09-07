@@ -32,7 +32,7 @@ Hosted on a free tier, so the first load after a quiet period can take up to a m
 ## Features
 
 **Learning**
-- 90+ German words (levels A1-B1) with Amharic translations, pronunciation in Ge'ez script and bilingual example sentences
+- 350+ German words (levels A1-B1) across 29 topics with Amharic translations, pronunciation in Ge'ez script and bilingual example sentences
 - Grammar lessons written in Amharic - sentence structure, der/die/das, verb conjugation, Perfekt, Dativ/Akkusativ
 - Flashcards with a flip animation - mark each word as known or unknown
 - Multiple-choice quizzes in both directions (German → Amharic and Amharic → German), generated fresh on every run
