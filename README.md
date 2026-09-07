@@ -54,7 +54,7 @@ Hosted on a free tier, so the first load after a quiet period can take up to a m
 |---|---|
 | Frontend | React 18, TypeScript, Vite 6, Tailwind CSS 4, React Router |
 | Backend | Node.js 22, Express, TypeScript, Zod validation |
-| Database | SQLite (better-sqlite3), auto-created and auto-seeded on first start |
+| Database | Turso (libSQL), auto-seeded on first start, local SQLite fallback for dev |
 | Auth | JWT tokens, bcrypt password hashing |
 | Hosting | Render, auto-deploys from `main` on every push |
 
@@ -129,6 +129,8 @@ npm start        # single server on :3001
 | `JWT_SECRET` | dev fallback | Set a real secret in production |
 | `DEMO_PASSWORD` | `demo1234` | Password for the seeded demo account |
 | `DATA_DIR` | `server/data` | Where the SQLite file lives |
+| `TURSO_DATABASE_URL` | local file | libsql:// URL from Turso dashboard |
+| `TURSO_AUTH_TOKEN` | _(none)_ | Auth token from Turso dashboard |
 
 ## Roadmap
 
