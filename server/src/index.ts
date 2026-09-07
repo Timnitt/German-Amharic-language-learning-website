@@ -1,3 +1,4 @@
+import 'express-async-errors'
 import express from 'express'
 import cors from 'cors'
 import path from 'node:path'
@@ -13,7 +14,7 @@ import { lessonRouter } from './routes/lessonRoutes.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PORT = Number(process.env.PORT) || 3001
 
-seedDatabase()
+await seedDatabase()
 
 const app = express()
 app.use(cors())
@@ -29,7 +30,6 @@ app.use('/api/quiz', quizRouter)
 app.use('/api/progress', progressRouter)
 app.use('/api/lessons', lessonRouter)
 
-// Serve the built client in production (single-container deployment)
 const clientDist = process.env.CLIENT_DIST || path.resolve(__dirname, '../../client/dist')
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist))
