@@ -1,17 +1,17 @@
 import { Router } from 'express'
-import { db, type VocabRow } from '../db.js'
+import { all, type VocabRow } from '../db.js'
 
 export const vocabularyRouter = Router()
 
 const LEVELS = ['A1', 'A2', 'B1'] as const
 
-vocabularyRouter.get('/meta', (_req, res) => {
-  const categories = db
-    .prepare('SELECT DISTINCT category FROM vocabulary ORDER BY category')
-    .all() as { category: string }[]
-  const counts = db
-    .prepare('SELECT level, COUNT(*) AS count FROM vocabulary GROUP BY level')
-    .all() as { level: string; count: number }[]
+vocabularyRouter.get('/meta', async (_req, res) => {
+  const categories = await all<{ category: string }>(
+    'SELECT DISTINCT category FROM vocabulary ORDER BY category',
+  )
+  const counts = await all<{ level: string; count: number }>(
+    'SELECT level, COUNT(*) AS count FROM vocabulary GROUP BY level',
+  )
   res.json({
     levels: LEVELS,
     categories: categories.map((c) => c.category),
@@ -19,7 +19,7 @@ vocabularyRouter.get('/meta', (_req, res) => {
   })
 })
 
-vocabularyRouter.get('/', (req, res) => {
+vocabularyRouter.get('/', async (req, res) => {
   const { level, category, search } = req.query
   const conditions: string[] = []
   const params: unknown[] = []
@@ -39,8 +39,6 @@ vocabularyRouter.get('/', (req, res) => {
   }
 
   const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
-  const rows = db
-    .prepare(`SELECT * FROM vocabulary ${where} ORDER BY level, category, german`)
-    .all(...params) as VocabRow[]
+  const rows = await all<VocabRow>(`SELECT * FROM vocabulary ${where} ORDER BY level, category, german`, params)
   res.json({ items: rows, total: rows.length })
 })

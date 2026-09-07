@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-import { db, type UserRow } from '../db.js'
+import { get, run, type UserRow } from '../db.js'
 import { signToken, requireAuth, type AuthedRequest } from '../auth.js'
 
 export const authRouter = Router()
@@ -21,7 +21,7 @@ function publicUser(user: UserRow) {
   return { id: user.id, name: user.name, email: user.email, createdAt: user.created_at }
 }
 
-authRouter.post('/register', (req, res) => {
+authRouter.post('/register', async (req, res) => {
   const parsed = registerSchema.safeParse(req.body)
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Invalid input' })
@@ -29,25 +29,27 @@ authRouter.post('/register', (req, res) => {
   }
   const { name, email, password } = parsed.data
 
-  const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email)
+  const existing = await get('SELECT id FROM users WHERE email = ?', [email])
   if (existing) {
     res.status(409).json({ error: 'An account with this email already exists' })
     return
   }
 
   const hash = bcrypt.hashSync(password, 10)
-  const result = db
-    .prepare('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)')
-    .run(name, email, hash)
-  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(result.lastInsertRowid) as UserRow
+  const result = await run('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)', [
+    name,
+    email,
+    hash,
+  ])
+  const user = await get<UserRow>('SELECT * FROM users WHERE id = ?', [result.lastInsertRowid!])
 
   res.status(201).json({
-    token: signToken({ userId: user.id, email: user.email }),
-    user: publicUser(user),
+    token: signToken({ userId: user!.id, email: user!.email }),
+    user: publicUser(user!),
   })
 })
 
-authRouter.post('/login', (req, res) => {
+authRouter.post('/login', async (req, res) => {
   const parsed = loginSchema.safeParse(req.body)
   if (!parsed.success) {
     res.status(400).json({ error: 'Invalid email or password' })
@@ -55,7 +57,7 @@ authRouter.post('/login', (req, res) => {
   }
   const { email, password } = parsed.data
 
-  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email) as UserRow | undefined
+  const user = await get<UserRow>('SELECT * FROM users WHERE email = ?', [email])
   if (!user || !bcrypt.compareSync(password, user.password_hash)) {
     res.status(401).json({ error: 'Invalid email or password' })
     return
@@ -67,8 +69,8 @@ authRouter.post('/login', (req, res) => {
   })
 })
 
-authRouter.get('/me', requireAuth, (req: AuthedRequest, res) => {
-  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user!.userId) as UserRow | undefined
+authRouter.get('/me', requireAuth, async (req: AuthedRequest, res) => {
+  const user = await get<UserRow>('SELECT * FROM users WHERE id = ?', [req.user!.userId])
   if (!user) {
     res.status(404).json({ error: 'User not found' })
     return
