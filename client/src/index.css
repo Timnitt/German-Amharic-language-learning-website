@@ -1,9 +1,16 @@
 @import 'tailwindcss';
 
+/* Dark mode is toggled by a `.dark` class on <html> (see ThemeToggle) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: 'Noto Sans Ethiopic', 'Yanone Kaffeesatz', 'Chilanka', sans-serif;
 
   --color-paper: #f5f9fe;
+
+  /* Dark theme surfaces — blue-tinted to match the light paper */
+  --color-night: #0e141b;
+  --color-night-raised: #16202a;
 
   --color-blue-50: #f0f6fe;
   --color-blue-100: #e7f0fd;
@@ -35,8 +42,16 @@ body {
   @apply text-gray-800 antialiased;
 }
 
+.dark {
+  color-scheme: dark;
+}
+.dark body {
+  background-color: var(--color-night);
+  @apply text-gray-200;
+}
+
 ::selection {
-  @apply bg-blue-200;
+  @apply bg-blue-200 dark:bg-blue-800 dark:text-white;
 }
 
 .handwritten-border {
@@ -63,26 +78,26 @@ body {
 
 /* Lesson markdown content */
 .lesson-content h2 {
-  @apply text-2xl font-black text-gray-900 mt-8 mb-3;
+  @apply text-2xl font-black text-gray-900 dark:text-gray-100 mt-8 mb-3;
 }
 .lesson-content p {
-  @apply text-gray-700 leading-relaxed mb-4 text-lg;
+  @apply text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-lg;
 }
 .lesson-content ul {
-  @apply list-disc pl-6 mb-4 space-y-2 text-gray-700 text-lg;
+  @apply list-disc pl-6 mb-4 space-y-2 text-gray-700 dark:text-gray-300 text-lg;
 }
 .lesson-content strong {
-  @apply font-bold text-blue-800;
+  @apply font-bold text-blue-800 dark:text-blue-300;
 }
 .lesson-content table {
   @apply w-full border-collapse mb-6 text-base;
 }
 .lesson-content th {
-  @apply bg-gray-800 text-blue-50 px-4 py-2 text-left font-bold;
+  @apply bg-gray-800 text-blue-50 dark:bg-blue-950 px-4 py-2 text-left font-bold;
 }
 .lesson-content td {
-  @apply border-b border-gray-200 px-4 py-2;
+  @apply border-b border-gray-200 dark:border-gray-700 px-4 py-2;
 }
 .lesson-content del {
-  @apply text-gray-400;
+  @apply text-gray-400 dark:text-gray-400;
 }

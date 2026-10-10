@@ -17,6 +17,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Chilanka&family=Yanone+Kaffeesatz:wght@400;600;700&family=Noto+Sans+Ethiopic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Apply the saved (or system) theme before first paint to avoid a light flash -->
+    <script>
+      try {
+        var t = localStorage.getItem('theme')
+        if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark')
+        }
+      } catch (e) {}
+    </script>
     <title>ጀ-አ ቋንቋ ማዕከል | German-Amharic Learning</title>
     <meta property="og:site_name" content="ጀ-አ ቋንቋ ማዕከል" />
   </head>

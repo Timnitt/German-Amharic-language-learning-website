@@ -27,13 +27,13 @@ export default function Register() {
 
   return (
     <div className="max-w-md mx-auto px-6 py-16">
-      <div className="bg-paper border-2 border-gray-300 handwritten-border p-8">
-        <h1 className="text-3xl font-black text-gray-900 mb-2 text-center">ነፃ መለያ ይክፈቱ</h1>
-        <p className="text-gray-500 text-center mb-8">እድገትዎን ይከታተሉ፣ ውጤትዎን ይመዝግቡ።</p>
+      <div className="bg-paper dark:bg-night-raised border-2 border-gray-300 dark:border-gray-700 handwritten-border p-8">
+        <h1 className="text-3xl font-black text-gray-900 dark:text-gray-100 mb-2 text-center">ነፃ መለያ ይክፈቱ</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-center mb-8">እድገትዎን ይከታተሉ፣ ውጤትዎን ይመዝግቡ።</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-bold text-gray-700 mb-1">ስም</label>
+            <label htmlFor="name" className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">ስም</label>
             <input
               id="name"
               type="text"
@@ -41,25 +41,25 @@ export default function Register() {
               minLength={2}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full border-2 border-gray-300 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:border-blue-600"
+              className="w-full border-2 border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-white dark:bg-night focus:outline-none focus:border-blue-600"
               placeholder="ስምዎን ያስገቡ"
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-1">ኢሜይል</label>
+            <label htmlFor="email" className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">ኢሜይል</label>
             <input
               id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border-2 border-gray-300 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:border-blue-600"
+              className="w-full border-2 border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-white dark:bg-night focus:outline-none focus:border-blue-600"
               placeholder="you@example.com"
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-1">
-              የይለፍ ቃል <span className="text-gray-400 font-normal">(ቢያንስ 6 ፊደላት)</span>
+            <label htmlFor="password" className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">
+              የይለፍ ቃል <span className="text-gray-400 dark:text-gray-400 font-normal">(ቢያንስ 6 ፊደላት)</span>
             </label>
             <input
               id="password"
@@ -68,12 +68,12 @@ export default function Register() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border-2 border-gray-300 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:border-blue-600"
+              className="w-full border-2 border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-white dark:bg-night focus:outline-none focus:border-blue-600"
               placeholder="••••••••"
             />
           </div>
 
-          {error && <p className="text-red-600 text-sm font-semibold">{error}</p>}
+          {error && <p className="text-red-600 dark:text-red-400 text-sm font-semibold">{error}</p>}
 
           <button
             type="submit"
@@ -84,9 +84,9 @@ export default function Register() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-500">
+        <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
           መለያ አለዎት?{' '}
-          <Link to="/login" className="font-bold text-blue-700 underline">
+          <Link to="/login" className="font-bold text-blue-700 dark:text-blue-400 underline">
             ይግቡ
           </Link>
         </p>
