@@ -71,7 +71,7 @@ export default function Flashcards() {
           <p className="text-gray-500 font-medium">ካርዱን ይንኩ — ትርጉሙን ያዩ።</p>
         </div>
         <div className="flex gap-2">
-          {(['A1', 'A2', 'B1'] as Level[]).map((l) => (
+          {(['A1', 'A2', 'B1', 'B2'] as Level[]).map((l) => (
             <button
               key={l}
               onClick={() => setLevel(l)}

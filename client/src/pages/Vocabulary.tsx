@@ -33,6 +33,17 @@ const categoryLabels: Record<string, string> = {
   questions: 'ጥያቄዎች',
   restaurant: 'ምግብ ቤት',
   health: 'ጤና',
+  fruits_vegetables: 'ፍራፍሬ እና አትክልት',
+  prepositions: 'መስተዋድዶች',
+  pronouns: 'ተውላጠ-ስሞች',
+  countries: 'አገሮች',
+  modal_verbs: 'ዋና ግሶች',
+  separable_verbs: 'ተነጣይ ግሶች',
+  conjunctions: 'ማያያዣዎች',
+  classroom: 'ክፍል ውስጥ',
+  city_places: 'ከተማ ውስጥ',
+  legal_admin: 'ህጋዊ/አስተዳደራዊ',
+  medical: 'ህክምና',
 }
 
 export default function Vocabulary() {

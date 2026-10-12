@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { api } from '../api'
 import { useAuth } from '../AuthContext'
-import type { VocabMeta } from '../types'
+import type { VocabMeta, DashboardStats } from '../types'
 
 const features = [
   {
@@ -10,7 +10,7 @@ const features = [
     emoji: '📚',
     tag: 'የቃላት ማከማቻ',
     title: 'የቃላት ዝርዝር',
-    text: 'ከ90 በላይ የጀርመንኛ ቃላት ከአማርኛ ትርጉም፣ አነባበብ እና ምሳሌያዊ ዓረፍተ-ነገሮች ጋር። በደረጃ (A1–B1) እና በምድብ ይፈልጉ።',
+    text: 'ከ1000 በላይ የጀርመንኛ ቃላት ከአማርኛ ትርጉም፣ አነባበብ እና ምሳሌያዊ ዓረፍተ-ነገሮች ጋር። በደረጃ (A1–B2) እና በምድብ ይፈልጉ።',
   },
   {
     to: '/flashcards',
@@ -18,6 +18,13 @@ const features = [
     tag: 'መለማመጃ',
     title: 'ፍላሽ ካርዶች',
     text: 'ቃላትን በካርድ መገልበጥ ይለማመዱ። ያወቁትን እና ያላወቁትን ምልክት ያድርጉ — እድገትዎ ይመዘገባል።',
+  },
+  {
+    to: '/review',
+    emoji: '🔁',
+    tag: 'የዕለት ክለሳ',
+    title: 'ክለሳ (Spaced Repetition)',
+    text: 'ሳይንሳዊ በሆነ ዘዴ ቃላትን በየቀኑ ይከልሱ። ስርዓቱ መቼ መከለስ እንዳለብዎ ያሰላል — ረስቶ አይጠፋም።',
   },
   {
     to: '/quiz',
@@ -38,15 +45,31 @@ const features = [
 export default function Home() {
   const { user } = useAuth()
   const [meta, setMeta] = useState<VocabMeta | null>(null)
+  const [dueCount, setDueCount] = useState(0)
 
   useEffect(() => {
     api.get<VocabMeta>('/api/vocabulary/meta').then(setMeta).catch(() => {})
   }, [])
 
+  useEffect(() => {
+    if (!user) return
+    api.get<DashboardStats>('/api/progress/stats').then((s) => setDueCount(s.dueToday)).catch(() => {})
+  }, [user])
+
   const totalWords = meta ? Object.values(meta.counts).reduce((a, b) => a + b, 0) : null
 
   return (
     <>
+      {user && dueCount > 0 && (
+        <Link
+          to="/review"
+          className="block bg-amber-50 border-b-2 border-amber-200 px-6 py-3 text-center hover:bg-amber-100 transition"
+        >
+          <span className="font-bold text-amber-800">
+            🔥 {dueCount} ቃላት ለዛሬ ክለሳ ይጠብቃሉ — አሁን ይጀምሩ →
+          </span>
+        </Link>
+      )}
       <section className="relative overflow-hidden">
         <img
           src="/home-bg.svg"

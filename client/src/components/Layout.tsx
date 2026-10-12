@@ -4,6 +4,7 @@ import { useAuth } from '../AuthContext'
 
 const navItems = [
   { to: '/flashcards', label: 'ካርዶች' },
+  { to: '/review', label: 'ክለሳ' },
   { to: '/quiz', label: 'ፈተና' },
   { to: '/lessons', label: 'ትምህርቶች' },
 ]
