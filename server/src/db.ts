@@ -31,7 +31,7 @@ await db.executeMultiple(`
     german TEXT NOT NULL,
     amharic TEXT NOT NULL,
     pronunciation TEXT NOT NULL DEFAULT '',
-    level TEXT NOT NULL CHECK (level IN ('A1', 'A2', 'B1')),
+    level TEXT NOT NULL CHECK (level IN ('A1', 'A2', 'B1', 'B2')),
     category TEXT NOT NULL,
     example_de TEXT NOT NULL DEFAULT '',
     example_am TEXT NOT NULL DEFAULT ''
@@ -41,7 +41,7 @@ await db.executeMultiple(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     subtitle TEXT NOT NULL DEFAULT '',
-    level TEXT NOT NULL CHECK (level IN ('A1', 'A2', 'B1')),
+    level TEXT NOT NULL CHECK (level IN ('A1', 'A2', 'B1', 'B2')),
     category TEXT NOT NULL,
     content TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -53,7 +53,25 @@ await db.executeMultiple(`
     correct_count INTEGER NOT NULL DEFAULT 0,
     wrong_count INTEGER NOT NULL DEFAULT 0,
     last_reviewed TEXT NOT NULL DEFAULT (datetime('now')),
+    ease_factor REAL NOT NULL DEFAULT 2.5,
+    interval_days INTEGER NOT NULL DEFAULT 0,
+    next_review TEXT NOT NULL DEFAULT (datetime('now')),
+    repetitions INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (user_id, vocab_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS lesson_progress (
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    lesson_id INTEGER NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
+    completed_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, lesson_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS daily_activity (
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    activity_date TEXT NOT NULL,
+    reviews_count INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (user_id, activity_date)
   );
 
   CREATE TABLE IF NOT EXISTS quiz_results (
@@ -107,7 +125,7 @@ export interface VocabRow {
   german: string
   amharic: string
   pronunciation: string
-  level: 'A1' | 'A2' | 'B1'
+  level: 'A1' | 'A2' | 'B1' | 'B2'
   category: string
   example_de: string
   example_am: string
@@ -117,7 +135,7 @@ export interface LessonRow {
   id: number
   title: string
   subtitle: string
-  level: 'A1' | 'A2' | 'B1'
+  level: 'A1' | 'A2' | 'B1' | 'B2'
   category: string
   content: string
   created_at: string

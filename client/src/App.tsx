@@ -8,6 +8,7 @@ import Flashcards from './pages/Flashcards'
 import Quiz from './pages/Quiz'
 import Lessons from './pages/Lessons'
 import LessonDetail from './pages/LessonDetail'
+import Review from './pages/Review'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -27,6 +28,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/flashcards" element={<Flashcards />} />
+        <Route path="/review" element={<Review />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/lessons" element={<Lessons />} />
         <Route path="/lessons/vocabulary" element={<Vocabulary />} />

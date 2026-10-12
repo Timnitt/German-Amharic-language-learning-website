@@ -3,7 +3,7 @@ import { all, type VocabRow } from '../db.js'
 
 export const vocabularyRouter = Router()
 
-const LEVELS = ['A1', 'A2', 'B1'] as const
+const LEVELS = ['A1', 'A2', 'B1', 'B2'] as const
 
 vocabularyRouter.get('/meta', async (_req, res) => {
   const categories = await all<{ category: string }>(
