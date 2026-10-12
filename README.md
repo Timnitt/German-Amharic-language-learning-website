@@ -3,6 +3,7 @@
 A free web app that teaches German to Amharic speakers - flashcards, quizzes, grammar lessons and progress tracking, all explained in Amharic.
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Try_it-2379ef)](https://german-amharic-language-learning-website.onrender.com)
+[![CI](https://github.com/Timnitt/German-Amharic-language-learning-website/actions/workflows/ci.yml/badge.svg)](https://github.com/Timnitt/German-Amharic-language-learning-website/actions/workflows/ci.yml)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
 ![React](https://img.shields.io/badge/React-18-61dafb)
 ![Node](https://img.shields.io/badge/Node-22_LTS-339933)
@@ -32,13 +33,17 @@ Hosted on a free tier, so the first load after a quiet period can take up to a m
 ## Features
 
 **Learning**
-- 350+ German words (levels A1-B1) across 29 topics with Amharic translations, pronunciation in Ge'ez script and bilingual example sentences
-- Grammar lessons written in Amharic - sentence structure, der/die/das, verb conjugation, Perfekt, Dativ/Akkusativ
+- 1,000+ German words (levels A1-B2) across 41 topics with Amharic translations, pronunciation in Ge'ez script and bilingual example sentences - including integration-course topics like legal/admin and medical vocabulary
+- 22 grammar lessons written in Amharic, from A1 to B2 - sentence structure, der/die/das, verb conjugation, Perfekt and Präteritum, Dativ/Akkusativ, modal and separable verbs, Genitiv, Konjunktiv II, passive voice, relative clauses
 - Flashcards with a flip animation - mark each word as known or unknown
+- Daily review with spaced repetition (SM-2) - words you get wrong come back sooner, words you know come back later
 - Multiple-choice quizzes in both directions (German → Amharic and Amharic → German), generated fresh on every run
+- Light and dark mode
 
 **Tracking**
 - Personal dashboard: words practiced per level, accuracy, hardest words, quiz history
+- Daily streaks and a "words due today" count
+- Mark lessons as completed and see your progress through all lessons
 - Every flashcard answer and quiz result is stored per user
 - Works without an account too - practicing is open to everyone, tracking needs a login
 
@@ -46,7 +51,7 @@ Hosted on a free tier, so the first load after a quiet period can take up to a m
 
 | Flashcards | Quiz | Dashboard |
 |---|---|---|
-| ![Flashcards](docs/screenshots/flashcardflipped.png) | ![Quiz](docs/screenshots/quiz.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+| ![Flashcards](docs/screenshots/flashcard-flipped.png) | ![Quiz](docs/screenshots/quiz.png) | ![Dashboard](docs/screenshots/dashboard.png) |
 
 ## Tech stack
 
@@ -54,8 +59,9 @@ Hosted on a free tier, so the first load after a quiet period can take up to a m
 |---|---|
 | Frontend | React 18, TypeScript, Vite 6, Tailwind CSS 4, React Router |
 | Backend | Node.js 22, Express, TypeScript, Zod validation |
-| Database | Turso (libSQL), auto-seeded on first start, local SQLite fallback for dev |
+| Database | Turso (libSQL), auto-migrated and seeded on start, local SQLite fallback for dev |
 | Auth | JWT tokens, bcrypt password hashing |
+| CI | GitHub Actions - typecheck and production build on every push and pull request |
 | Hosting | Render, auto-deploys from `main` on every push |
 
 ## Architecture
@@ -63,14 +69,14 @@ Hosted on a free tier, so the first load after a quiet period can take up to a m
 ```
 ├── client/                 # React SPA
 │   └── src/
-│       ├── pages/          # Home, Lessons, Flashcards, Quiz, Dashboard, Auth
-│       ├── components/     # Shared layout
+│       ├── pages/          # Home, Lessons, Flashcards, Review, Quiz, Dashboard, Auth
+│       ├── components/     # Shared layout, theme toggle
 │       ├── AuthContext.tsx # Session state
 │       └── api.ts          # Typed fetch client
 └── server/                 # Express REST API
     └── src/
         ├── routes/         # auth, vocabulary, quiz, progress, lessons
-        ├── db.ts           # SQLite schema
+        ├── db.ts           # Schema and startup migrations
         ├── auth.ts         # JWT middleware
         └── seedData.ts     # Vocabulary + lessons content
 ```
@@ -78,7 +84,7 @@ Hosted on a free tier, so the first load after a quiet period can take up to a m
 ```mermaid
 flowchart LR
     B[Browser<br/>React SPA] -->|/api/* JSON| S[Express API]
-    S --> D[(SQLite)]
+    S --> D[(Turso / SQLite)]
     S -->|serves built SPA| B
 ```
 
@@ -96,7 +102,11 @@ In development, Vite runs the frontend with hot reload and proxies `/api/*` to t
 | GET | `/api/quiz` | - | Generate a quiz (`?level=&count=`) |
 | POST | `/api/quiz/submit` | ✓ | Save a quiz result |
 | GET | `/api/quiz/history` | ✓ | Recent quiz results |
-| POST | `/api/progress/review` | ✓ | Record a flashcard answer |
+| POST | `/api/progress/review` | ✓ | Record a flashcard answer and schedule the next review |
+| GET | `/api/progress/due` | ✓ | Words due for review (`?level=&limit=`) |
+| GET | `/api/progress/streak` | ✓ | Current and longest streak, reviews today |
+| POST | `/api/progress/lesson-complete` | ✓ | Mark a lesson as completed |
+| GET | `/api/progress/lessons` | ✓ | Completed lessons |
 | GET | `/api/progress/stats` | ✓ | Dashboard aggregates |
 | GET | `/api/lessons` | - | List lessons |
 | GET | `/api/lessons/:id` | - | Lesson content |
@@ -134,11 +144,12 @@ npm start        # single server on :3001
 
 ## Roadmap
 
-- [ ] Tigrigna and English interface languages, so the platform serves more of the Horn of Africa community
+- [x] Spaced repetition - a daily "words due for review" queue instead of random shuffle
+- [x] CI pipeline - typecheck and build on every push and pull request
+- [ ] Automated tests
 - [ ] Audio pronunciation for every word
-- [ ] Spaced repetition - a daily "words due for review" queue instead of random shuffle
+- [ ] Tigrigna and English interface languages, so the platform serves more of the Horn of Africa community
 - [ ] Docker setup for one-command self-hosting
-- [ ] Automated tests and CI pipeline
 - [ ] AI grammar coach - ask questions about any German sentence, answered in Amharic
 
 ## Author
