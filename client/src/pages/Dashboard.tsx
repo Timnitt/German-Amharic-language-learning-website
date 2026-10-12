@@ -48,36 +48,30 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-12">
-<<<<<<< HEAD
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 mb-2">ሰላም {user?.name}! 👋</h1>
-          <p className="text-gray-500 font-medium">የመማር እድገትዎ ማጠቃለያ ይኸውና።</p>
+          <h1 className="text-3xl font-black text-gray-900 dark:text-gray-100 mb-2">ሰላም {user?.name}! 👋</h1>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">የመማር እድገትዎ ማጠቃለያ ይኸውና።</p>
         </div>
         {stats.currentStreak > 0 && (
-          <div className="bg-amber-50 border-2 border-amber-200 handwritten-border px-5 py-3 text-center">
-            <div className="text-2xl font-black text-amber-700">🔥 {stats.currentStreak}</div>
-            <div className="text-xs font-semibold text-amber-600 mt-0.5">ተከታታይ ቀናት</div>
+          <div className="bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-200 dark:border-amber-900 handwritten-border px-5 py-3 text-center">
+            <div className="text-2xl font-black text-amber-700 dark:text-amber-300">🔥 {stats.currentStreak}</div>
+            <div className="text-xs font-semibold text-amber-600 dark:text-amber-400 mt-0.5">ተከታታይ ቀናት</div>
           </div>
         )}
-=======
-      <div className="mb-10">
-        <h1 className="text-3xl font-black text-gray-900 dark:text-gray-100 mb-2">ሰላም {user?.name}! 👋</h1>
-        <p className="text-gray-500 dark:text-gray-400 font-medium">የመማር እድገትዎ ማጠቃለያ ይኸውና።</p>
->>>>>>> main
       </div>
 
       {stats.dueToday > 0 && (
         <Link
           to="/review"
-          className="block mb-8 bg-blue-50 border-2 border-blue-200 handwritten-border p-5 hover:shadow-md transition group"
+          className="block mb-8 bg-blue-50 dark:bg-blue-950/40 border-2 border-blue-200 dark:border-blue-900 handwritten-border p-5 hover:shadow-md transition group"
         >
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-lg font-black text-blue-800">
+              <span className="text-lg font-black text-blue-800 dark:text-blue-300">
                 {stats.dueToday} ቃላት ለዛሬ ይጠብቃሉ
               </span>
-              <p className="text-sm text-blue-600 mt-1">አሁን ክለሳ ይጀምሩ →</p>
+              <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">አሁን ክለሳ ይጀምሩ →</p>
             </div>
             <span className="text-3xl group-hover:scale-110 transition-transform">📖</span>
           </div>
@@ -144,10 +138,9 @@ export default function Dashboard() {
         </section>
       </div>
 
-<<<<<<< HEAD
       {lessons.length > 0 && (
-        <section className="bg-paper border-2 border-gray-300/80 handwritten-border p-6 mb-12">
-          <h2 className="text-xl font-black text-gray-900 mb-5">
+        <section className="bg-paper dark:bg-night-raised border-2 border-gray-300/80 dark:border-gray-700 handwritten-border p-6 mb-12">
+          <h2 className="text-xl font-black text-gray-900 dark:text-gray-100 mb-5">
             የትምህርት እድገት ({completedIds.size}/{lessons.length})
           </h2>
           <div className="space-y-3">
@@ -157,21 +150,21 @@ export default function Dashboard() {
                 <Link
                   key={lesson.id}
                   to={`/lessons/${lesson.id}`}
-                  className="flex items-center justify-between border-b border-gray-200 pb-3 hover:bg-gray-50 px-2 -mx-2 rounded transition"
+                  className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 px-2 -mx-2 rounded transition"
                 >
                   <div className="flex items-center gap-3">
-                    <span className={`text-lg ${isDone ? 'text-green-600' : 'text-gray-300'}`}>
+                    <span className={`text-lg ${isDone ? 'text-green-600 dark:text-green-400' : 'text-gray-300 dark:text-gray-600'}`}>
                       {isDone ? '✓' : '○'}
                     </span>
                     <div>
-                      <span className="font-bold text-gray-900">{lesson.title}</span>
-                      <span className="ml-2 text-xs bg-gray-800 text-blue-50 px-1.5 py-0.5 rounded font-bold">
+                      <span className="font-bold text-gray-900 dark:text-gray-100">{lesson.title}</span>
+                      <span className="ml-2 text-xs bg-gray-800 dark:bg-blue-100 text-blue-50 dark:text-gray-900 px-1.5 py-0.5 rounded font-bold">
                         {lesson.level}
                       </span>
                     </div>
                   </div>
                   {isDone && (
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-gray-400 dark:text-gray-400">
                       {(() => {
                         const c = completedLessons.find((c) => c.lesson_id === lesson.id)
                         return c ? new Date(c.completed_at + 'Z').toLocaleDateString() : ''
@@ -185,12 +178,8 @@ export default function Dashboard() {
         </section>
       )}
 
-      <section className="bg-paper border-2 border-gray-300/80 handwritten-border p-6">
-        <h2 className="text-xl font-black text-gray-900 mb-5">
-=======
       <section className="bg-paper dark:bg-night-raised border-2 border-gray-300/80 dark:border-gray-700 handwritten-border p-6">
         <h2 className="text-xl font-black text-gray-900 dark:text-gray-100 mb-5">
->>>>>>> main
           የፈተና ታሪክ ({stats.quizCount})
         </h2>
         {history.length === 0 ? (
