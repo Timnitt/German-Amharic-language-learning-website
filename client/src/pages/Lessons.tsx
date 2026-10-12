@@ -17,60 +17,60 @@ export default function Lessons() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       <div className="text-center max-w-xl mx-auto mb-16">
-        <h1 className="text-3xl font-black text-gray-900 mb-3">የቋንቋ ትምህርቶች</h1>
-        <p className="text-gray-500 font-medium mb-4">
+        <h1 className="text-3xl font-black text-gray-900 dark:text-gray-100 mb-3">የቋንቋ ትምህርቶች</h1>
+        <p className="text-gray-500 dark:text-gray-400 font-medium mb-4">
           የጀርመንኛ ሰዋስው እና ንግግር - በአማርኛ ማብራሪያ።
         </p>
         <div className="w-24 h-1 bg-blue-700 mx-auto rounded-full" />
       </div>
           <section className="mb-16">
-        <h2 className="text-2xl font-black text-gray-900 mb-6">የቃላት ክፍል</h2>
+        <h2 className="text-2xl font-black text-gray-900 dark:text-gray-100 mb-6">የቃላት ክፍል</h2>
         <Link
           to="/lessons/vocabulary"
-          className="block group bg-blue-50 border-2 border-blue-200 handwritten-border p-8 shadow-sm hover:shadow-md transition duration-200"
+          className="block group bg-blue-50 dark:bg-blue-950/40 border-2 border-blue-200 dark:border-blue-900 handwritten-border p-8 shadow-sm hover:shadow-md transition duration-200"
         >
           <div className="flex items-center space-x-3 text-sm font-semibold mb-3">
-            <span className="bg-gray-800 text-blue-50 px-2 py-0.5 rounded text-xs font-bold">A1–B1</span>
-            <span className="text-blue-700">የቃላት ማከማቻ</span>
+            <span className="bg-gray-800 dark:bg-blue-100 text-blue-50 dark:text-gray-900 px-2 py-0.5 rounded text-xs font-bold">A1–B1</span>
+            <span className="text-blue-700 dark:text-blue-400">የቃላት ማከማቻ</span>
             <span className="text-2xl ml-auto">📚</span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 group-hover:text-blue-800 transition-colors mb-2">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-800 transition-colors mb-2">
             የቃላት ዝርዝር
           </h3>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
             የጀርመንኛ ቃላት ከአማርኛ ትርጉም፣ አነባበብ እና ምሳሌያዊ ዓረፍተ-ነገሮች ጋር — በደረጃ እና በምድብ ይፈልጉ።
           </p>
           <div className="mt-4">
-            <span className="text-sm font-bold text-blue-700 group-hover:underline">
+            <span className="text-sm font-bold text-blue-700 dark:text-blue-400 group-hover:underline">
               ወደ ቃላት ዝርዝር ይሂዱ &rarr;
             </span>
           </div>
         </Link>
       </section>
 
-      <h2 className="text-2xl font-black text-gray-900 mb-6">የሰዋስው ትምህርቶች</h2>
+      <h2 className="text-2xl font-black text-gray-900 dark:text-gray-100 mb-6">የሰዋስው ትምህርቶች</h2>
       {loading ? (
-        <div className="py-16 text-center text-gray-400 text-lg">በመጫን ላይ…</div>
+        <div className="py-16 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
       ) : (
         <div className="space-y-8">
           {lessons.map((lesson) => (
             <Link
               key={lesson.id}
               to={`/lessons/${lesson.id}`}
-              className="block group bg-paper border border-gray-200 p-8 rounded-2xl shadow-sm hover:shadow-md transition duration-200"
+              className="block group bg-paper dark:bg-night-raised border border-gray-200 dark:border-gray-800 p-8 rounded-2xl shadow-sm hover:shadow-md transition duration-200"
             >
-              <div className="flex items-center space-x-3 text-sm text-gray-400 font-semibold mb-3">
-                <span className="bg-gray-800 text-blue-50 px-2 py-0.5 rounded text-xs font-bold">
+              <div className="flex items-center space-x-3 text-sm text-gray-400 dark:text-gray-400 font-semibold mb-3">
+                <span className="bg-gray-800 dark:bg-blue-100 text-blue-50 dark:text-gray-900 px-2 py-0.5 rounded text-xs font-bold">
                   {lesson.level}
                 </span>
-                <span className="text-blue-700">{lesson.category}</span>
+                <span className="text-blue-700 dark:text-blue-400">{lesson.category}</span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 group-hover:text-blue-800 transition-colors mb-2">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-800 transition-colors mb-2">
                 {lesson.title}
               </h2>
-              <p className="text-gray-600 leading-relaxed">{lesson.subtitle}</p>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{lesson.subtitle}</p>
               <div className="mt-4">
-                <span className="text-sm font-bold text-blue-700 group-hover:underline">
+                <span className="text-sm font-bold text-blue-700 dark:text-blue-400 group-hover:underline">
                   ሙሉውን ትምህርት ያንብቡ &rarr;
                 </span>
               </div>
