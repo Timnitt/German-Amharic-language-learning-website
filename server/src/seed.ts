@@ -1,30 +1,38 @@
-import { get, run, batch } from './db.js'
+import { all, run, batch } from './db.js'
 import { vocabulary, lessons } from './seedData.js'
 import bcrypt from 'bcryptjs'
 
+// Inserts seed entries that aren't in the DB yet, matched by german word / lesson title,
+// so new content reaches existing databases. Edits to existing entries are not applied.
 export async function seedDatabase(): Promise<void> {
-  const vocabCount = (await get<{ c: number }>('SELECT COUNT(*) AS c FROM vocabulary'))!.c
-  if (vocabCount === 0) {
+  const existingWords = new Set(
+    (await all<{ german: string }>('SELECT german FROM vocabulary')).map((r) => r.german),
+  )
+  const newWords = vocabulary.filter((v) => !existingWords.has(v.german))
+  if (newWords.length > 0) {
     await batch(
-      vocabulary.map((v) => ({
+      newWords.map((v) => ({
         sql: `INSERT INTO vocabulary (german, amharic, pronunciation, level, category, example_de, example_am)
               VALUES (@german, @amharic, @pronunciation, @level, @category, @example_de, @example_am)`,
         args: { ...v } as Record<string, unknown>,
       })),
     )
-    console.log(`Seeded ${vocabulary.length} vocabulary entries`)
+    console.log(`Seeded ${newWords.length} vocabulary entries`)
   }
 
-  const lessonCount = (await get<{ c: number }>('SELECT COUNT(*) AS c FROM lessons'))!.c
-  if (lessonCount === 0) {
+  const existingTitles = new Set(
+    (await all<{ title: string }>('SELECT title FROM lessons')).map((r) => r.title),
+  )
+  const newLessons = lessons.filter((l) => !existingTitles.has(l.title))
+  if (newLessons.length > 0) {
     await batch(
-      lessons.map((l) => ({
+      newLessons.map((l) => ({
         sql: `INSERT INTO lessons (title, subtitle, level, category, content)
               VALUES (@title, @subtitle, @level, @category, @content)`,
         args: { ...l } as Record<string, unknown>,
       })),
     )
-    console.log(`Seeded ${lessons.length} lessons`)
+    console.log(`Seeded ${newLessons.length} lessons`)
   }
 
   const hash = bcrypt.hashSync(process.env.DEMO_PASSWORD || 'demo1234', 10)

@@ -63,9 +63,9 @@ export default function Home() {
       {user && dueCount > 0 && (
         <Link
           to="/review"
-          className="block bg-amber-50 border-b-2 border-amber-200 px-6 py-3 text-center hover:bg-amber-100 transition"
+          className="block bg-amber-50 dark:bg-amber-950/40 border-b-2 border-amber-200 dark:border-amber-900 px-6 py-3 text-center hover:bg-amber-100 dark:hover:bg-amber-950/60 transition"
         >
-          <span className="font-bold text-amber-800">
+          <span className="font-bold text-amber-800 dark:text-amber-300">
             🔥 {dueCount} ቃላት ለዛሬ ክለሳ ይጠብቃሉ — አሁን ይጀምሩ →
           </span>
         </Link>
