@@ -63,7 +63,7 @@ export default function Quiz() {
         <div className="bg-paper dark:bg-night-raised border-2 border-gray-300 dark:border-gray-700 handwritten-border p-8">
           <p className="font-bold text-gray-700 dark:text-gray-300 mb-4">ደረጃ ይምረጡ፦</p>
           <div className="flex justify-center gap-3 mb-8">
-            {(['A1', 'A2', 'B1'] as Level[]).map((l) => (
+            {(['A1', 'A2', 'B1', 'B2'] as Level[]).map((l) => (
               <button
                 key={l}
                 onClick={() => setLevel(l)}

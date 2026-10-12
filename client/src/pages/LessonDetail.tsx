@@ -2,12 +2,16 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { marked } from 'marked'
 import { api } from '../api'
-import type { Lesson } from '../types'
+import { useAuth } from '../AuthContext'
+import type { Lesson, LessonCompletion } from '../types'
 
 export default function LessonDetail() {
   const { id } = useParams()
+  const { user } = useAuth()
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [error, setError] = useState('')
+  const [completed, setCompleted] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     api
@@ -16,10 +20,32 @@ export default function LessonDetail() {
       .catch(() => setError('ትምህርቱ አልተገኘም።'))
   }, [id])
 
+  useEffect(() => {
+    if (!user || !id) return
+    api
+      .get<{ completed: LessonCompletion[] }>('/api/progress/lessons')
+      .then((res) => {
+        if (res.completed.some((c) => c.lesson_id === Number(id))) {
+          setCompleted(true)
+        }
+      })
+      .catch(() => {})
+  }, [user, id])
+
   const html = useMemo(
     () => (lesson ? (marked.parse(lesson.content, { async: false }) as string) : ''),
     [lesson],
   )
+
+  function markComplete() {
+    if (!id || saving) return
+    setSaving(true)
+    api
+      .post('/api/progress/lesson-complete', { lessonId: Number(id) })
+      .then(() => setCompleted(true))
+      .catch(() => {})
+      .finally(() => setSaving(false))
+  }
 
   if (error) {
     return (
@@ -47,7 +73,16 @@ export default function LessonDetail() {
           <span className="bg-gray-800 dark:bg-blue-100 text-blue-50 dark:text-gray-900 px-2.5 py-1 rounded text-xs font-bold">
             {lesson.level}
           </span>
+<<<<<<< HEAD
+          <span className="text-blue-700">{lesson.category}</span>
+          {completed && (
+            <span className="text-green-600 font-bold text-xs bg-green-50 px-2 py-1 rounded">
+              ✓ ተጠናቋል
+            </span>
+          )}
+=======
           <span className="text-blue-700 dark:text-blue-400">{lesson.category}</span>
+>>>>>>> main
         </div>
         <h1 className="text-4xl font-black text-gray-900 dark:text-gray-100 mb-3 leading-tight">{lesson.title}</h1>
         <p className="text-xl text-gray-500 dark:text-gray-400 font-medium">{lesson.subtitle}</p>
@@ -55,6 +90,43 @@ export default function LessonDetail() {
 
       <div className="lesson-content" dangerouslySetInnerHTML={{ __html: html }} />
 
+<<<<<<< HEAD
+      <footer className="mt-12 pt-8 border-t-2 border-gray-200 space-y-4">
+        {user && !completed && (
+          <button
+            onClick={markComplete}
+            disabled={saving}
+            className="w-full bg-green-600 text-white font-bold py-3.5 rounded-xl hover:bg-green-700 transition cursor-pointer disabled:opacity-50"
+          >
+            ✓ ትምህርቱን ጨርሻለሁ
+          </button>
+        )}
+        {user && completed && (
+          <div className="w-full text-center bg-green-50 border-2 border-green-200 text-green-700 font-bold py-3.5 rounded-xl">
+            ✓ ይህን ትምህርት ጨርሰዋል
+          </div>
+        )}
+        {!user && (
+          <p className="text-sm text-gray-500 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-center">
+            💡 <Link to="/login" className="font-bold text-blue-800 underline">ከገቡ</Link> ትምህርቱን
+            እንደጨረሱ ምልክት ማድረግ ይችላሉ።
+          </p>
+        )}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link
+            to="/flashcards"
+            className="flex-1 text-center bg-blue-700 text-white font-bold py-3.5 rounded-xl hover:bg-blue-800 transition"
+          >
+            🃏 በካርዶች ይለማመዱ
+          </Link>
+          <Link
+            to="/quiz"
+            className="flex-1 text-center bg-gray-800 text-blue-50 font-bold py-3.5 rounded-xl hover:bg-gray-700 transition"
+          >
+            ✏️ ራስዎን ይፈትኑ
+          </Link>
+        </div>
+=======
       <footer className="mt-12 pt-8 border-t-2 border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row gap-4">
         <Link
           to="/flashcards"
@@ -68,6 +140,7 @@ export default function LessonDetail() {
         >
           ✏️ ራስዎን ይፈትኑ
         </Link>
+>>>>>>> main
       </footer>
     </article>
   )

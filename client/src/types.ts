@@ -1,4 +1,4 @@
-export type Level = 'A1' | 'A2' | 'B1'
+export type Level = 'A1' | 'A2' | 'B1' | 'B2'
 
 export interface User {
   id: number
@@ -58,10 +58,24 @@ export interface DashboardStats {
   totalVocab: number
   reviewed: number
   mastered: number
+  dueToday: number
+  currentStreak: number
+  longestStreak: number
   totalReviews: number
   accuracy: number
   quizCount: number
   quizAverage: number
   byLevel: { level: Level; total: number; reviewed: number }[]
   weakest: { german: string; amharic: string; correct_count: number; wrong_count: number }[]
+}
+
+export interface ReviewWord extends VocabEntry {
+  correct_count: number
+  wrong_count: number
+  next_review: string
+}
+
+export interface LessonCompletion {
+  lesson_id: number
+  completed_at: string
 }
