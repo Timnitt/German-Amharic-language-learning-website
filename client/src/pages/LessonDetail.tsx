@@ -73,16 +73,12 @@ export default function LessonDetail() {
           <span className="bg-gray-800 dark:bg-blue-100 text-blue-50 dark:text-gray-900 px-2.5 py-1 rounded text-xs font-bold">
             {lesson.level}
           </span>
-<<<<<<< HEAD
-          <span className="text-blue-700">{lesson.category}</span>
+          <span className="text-blue-700 dark:text-blue-400">{lesson.category}</span>
           {completed && (
-            <span className="text-green-600 font-bold text-xs bg-green-50 px-2 py-1 rounded">
+            <span className="text-green-600 dark:text-green-400 font-bold text-xs bg-green-50 dark:bg-green-950/40 px-2 py-1 rounded">
               ✓ ተጠናቋል
             </span>
           )}
-=======
-          <span className="text-blue-700 dark:text-blue-400">{lesson.category}</span>
->>>>>>> main
         </div>
         <h1 className="text-4xl font-black text-gray-900 dark:text-gray-100 mb-3 leading-tight">{lesson.title}</h1>
         <p className="text-xl text-gray-500 dark:text-gray-400 font-medium">{lesson.subtitle}</p>
@@ -90,8 +86,7 @@ export default function LessonDetail() {
 
       <div className="lesson-content" dangerouslySetInnerHTML={{ __html: html }} />
 
-<<<<<<< HEAD
-      <footer className="mt-12 pt-8 border-t-2 border-gray-200 space-y-4">
+      <footer className="mt-12 pt-8 border-t-2 border-gray-200 dark:border-gray-800 space-y-4">
         {user && !completed && (
           <button
             onClick={markComplete}
@@ -102,13 +97,13 @@ export default function LessonDetail() {
           </button>
         )}
         {user && completed && (
-          <div className="w-full text-center bg-green-50 border-2 border-green-200 text-green-700 font-bold py-3.5 rounded-xl">
+          <div className="w-full text-center bg-green-50 dark:bg-green-950/40 border-2 border-green-200 dark:border-green-900 text-green-700 dark:text-green-400 font-bold py-3.5 rounded-xl">
             ✓ ይህን ትምህርት ጨርሰዋል
           </div>
         )}
         {!user && (
-          <p className="text-sm text-gray-500 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-center">
-            💡 <Link to="/login" className="font-bold text-blue-800 underline">ከገቡ</Link> ትምህርቱን
+          <p className="text-sm text-gray-500 dark:text-gray-400 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 rounded-xl px-4 py-3 text-center">
+            💡 <Link to="/login" className="font-bold text-blue-800 dark:text-blue-300 underline">ከገቡ</Link> ትምህርቱን
             እንደጨረሱ ምልክት ማድረግ ይችላሉ።
           </p>
         )}
@@ -121,26 +116,11 @@ export default function LessonDetail() {
           </Link>
           <Link
             to="/quiz"
-            className="flex-1 text-center bg-gray-800 text-blue-50 font-bold py-3.5 rounded-xl hover:bg-gray-700 transition"
+            className="flex-1 text-center bg-gray-800 dark:bg-blue-100 text-blue-50 dark:text-gray-900 font-bold py-3.5 rounded-xl hover:bg-gray-700 dark:hover:bg-blue-200 transition"
           >
             ✏️ ራስዎን ይፈትኑ
           </Link>
         </div>
-=======
-      <footer className="mt-12 pt-8 border-t-2 border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row gap-4">
-        <Link
-          to="/flashcards"
-          className="flex-1 text-center bg-blue-700 text-white font-bold py-3.5 rounded-xl hover:bg-blue-800 transition"
-        >
-          🃏 በካርዶች ይለማመዱ
-        </Link>
-        <Link
-          to="/quiz"
-          className="flex-1 text-center bg-gray-800 dark:bg-blue-100 text-blue-50 dark:text-gray-900 font-bold py-3.5 rounded-xl hover:bg-gray-700 dark:hover:bg-blue-200 transition"
-        >
-          ✏️ ራስዎን ይፈትኑ
-        </Link>
->>>>>>> main
       </footer>
     </article>
   )
