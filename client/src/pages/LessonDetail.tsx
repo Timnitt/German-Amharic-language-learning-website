@@ -1,25 +1,39 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
-import { api } from '../api'
+import { api, ApiError, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
+import ErrorMessage from '../components/ErrorMessage'
 import type { Lesson, LessonCompletion } from '../types'
 
 export default function LessonDetail() {
   const { id } = useParams()
   const { user } = useAuth()
   const [lesson, setLesson] = useState<Lesson | null>(null)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [notFound, setNotFound] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
+  const loadLesson = useCallback(() => {
+    setLoading(true)
+    setError('')
+    setNotFound(false)
     api
       .get<{ lesson: Lesson }>(`/api/lessons/${id}`)
       .then((res) => setLesson(res.lesson))
-      .catch(() => setError('ትምህርቱ አልተገኘም።'))
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 404) setNotFound(true)
+        else setError(toAmharicError(err))
+      })
+      .finally(() => setLoading(false))
   }, [id])
+
+  useEffect(() => {
+    loadLesson()
+  }, [loadLesson])
 
   useEffect(() => {
     if (!user || !id) return
@@ -51,10 +65,10 @@ export default function LessonDetail() {
       .finally(() => setSaving(false))
   }
 
-  if (error) {
+  if (notFound) {
     return (
       <div className="py-24 text-center">
-        <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">{error}</p>
+        <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">ትምህርቱ አልተገኘም።</p>
         <Link to="/lessons" className="text-blue-700 dark:text-blue-400 font-bold underline">
           ← ወደ ትምህርቶች ተመለስ
         </Link>
@@ -62,7 +76,20 @@ export default function LessonDetail() {
     )
   }
 
-  if (!lesson) {
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto px-6 py-12">
+        <ErrorMessage message={error} onRetry={loadLesson} />
+        <div className="text-center">
+          <Link to="/lessons" className="text-blue-700 dark:text-blue-400 font-bold underline">
+            ← ወደ ትምህርቶች ተመለስ
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (loading || !lesson) {
     return <div className="py-24 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
   }
 

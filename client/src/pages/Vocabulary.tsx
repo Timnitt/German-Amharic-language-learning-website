@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { api } from '../api'
+import { api, toAmharicError } from '../api'
 import Spinner from '../components/Spinner'
+import ErrorMessage from '../components/ErrorMessage'
 import type { VocabEntry, VocabMeta } from '../types'
 
 const categoryLabels: Record<string, string> = {
@@ -54,6 +55,9 @@ export default function Vocabulary() {
   const [category, setCategory] = useState('')
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  // Bumped to force the search effect to re-run on retry.
+  const [reload, setReload] = useState(0)
 
   useEffect(() => {
     api.get<VocabMeta>('/api/vocabulary/meta').then(setMeta).catch(() => {})
@@ -66,14 +70,18 @@ export default function Vocabulary() {
     if (search) params.set('search', search)
     const timer = setTimeout(() => {
       setLoading(true)
+      setError('')
       api
         .get<{ items: VocabEntry[] }>(`/api/vocabulary?${params}`)
         .then((res) => setItems(res.items))
-        .catch(() => setItems([]))
+        .catch((err) => {
+          setItems([])
+          setError(toAmharicError(err))
+        })
         .finally(() => setLoading(false))
     }, 200)
     return () => clearTimeout(timer)
-  }, [level, category, search])
+  }, [level, category, search, reload])
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-12">
@@ -120,6 +128,8 @@ export default function Vocabulary() {
 
       {loading ? (
         <Spinner />
+      ) : error ? (
+        <ErrorMessage message={error} onRetry={() => setReload((n) => n + 1)} />
       ) : items.length === 0 ? (
         <div className="py-16 text-center text-gray-400 dark:text-gray-400 text-lg">ምንም ቃል አልተገኘም።</div>
       ) : (

@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { api } from '../api'
+import { api, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
+import ErrorMessage from '../components/ErrorMessage'
 import type { DashboardStats, QuizResult, LessonSummary, LessonCompletion } from '../types'
 
 function StatCard({ label, value, accent }: { label: string; value: string | number; accent?: boolean }) {
@@ -23,24 +24,41 @@ export default function Dashboard() {
   const [history, setHistory] = useState<QuizResult[]>([])
   const [lessons, setLessons] = useState<LessonSummary[]>([])
   const [completedLessons, setCompletedLessons] = useState<LessonCompletion[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  useEffect(() => {
-    api.get<DashboardStats>('/api/progress/stats').then(setStats).catch(() => {})
-    api
-      .get<{ results: QuizResult[] }>('/api/quiz/history')
-      .then((res) => setHistory(res.results))
-      .catch(() => {})
-    api
-      .get<{ lessons: LessonSummary[] }>('/api/lessons')
-      .then((res) => setLessons(res.lessons))
-      .catch(() => {})
-    api
-      .get<{ completed: LessonCompletion[] }>('/api/progress/lessons')
-      .then((res) => setCompletedLessons(res.completed))
-      .catch(() => {})
+  const load = useCallback(() => {
+    setLoading(true)
+    setError('')
+    Promise.all([
+      api.get<DashboardStats>('/api/progress/stats'),
+      api.get<{ results: QuizResult[] }>('/api/quiz/history'),
+      api.get<{ lessons: LessonSummary[] }>('/api/lessons'),
+      api.get<{ completed: LessonCompletion[] }>('/api/progress/lessons'),
+    ])
+      .then(([statsRes, historyRes, lessonsRes, completedRes]) => {
+        setStats(statsRes)
+        setHistory(historyRes.results)
+        setLessons(lessonsRes.lessons)
+        setCompletedLessons(completedRes.completed)
+      })
+      .catch((err) => setError(toAmharicError(err)))
+      .finally(() => setLoading(false))
   }, [])
 
-  if (!stats) {
+  useEffect(() => {
+    load()
+  }, [load])
+
+  if (error) {
+    return (
+      <div className="max-w-5xl mx-auto px-6 py-12">
+        <ErrorMessage message={error} onRetry={load} />
+      </div>
+    )
+  }
+
+  if (loading || !stats) {
     return <div className="py-24 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
   }
 
