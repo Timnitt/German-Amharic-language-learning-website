@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { api } from '../api'
+import { api, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
 import type { QuizQuestion, Level } from '../types'
 
@@ -15,6 +15,7 @@ export default function Quiz() {
   const [score, setScore] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
   const [error, setError] = useState('')
+  const [saveFailed, setSaveFailed] = useState(false)
 
   async function start() {
     setError('')
@@ -24,10 +25,21 @@ export default function Quiz() {
       setIndex(0)
       setScore(0)
       setSelected(null)
+      setSaveFailed(false)
       setPhase('playing')
-    } catch {
-      setError('ፈተናውን መጫን አልተቻለም። እባክዎ እንደገና ይሞክሩ።')
+    } catch (err) {
+      setError(toAmharicError(err))
     }
+  }
+
+  // Saving the result is best-effort: a failure shows a non-blocking notice with a retry,
+  // it never blocks seeing the score.
+  function saveResult(finalScore: number) {
+    if (!user) return
+    setSaveFailed(false)
+    api
+      .post('/api/quiz/submit', { level, score: finalScore, total: questions.length })
+      .catch(() => setSaveFailed(true))
   }
 
   const question = questions[index]
@@ -42,9 +54,7 @@ export default function Quiz() {
     setTimeout(() => {
       if (index + 1 >= questions.length) {
         setPhase('finished')
-        if (user) {
-          api.post('/api/quiz/submit', { level, score: newScore, total: questions.length }).catch(() => {})
-        }
+        saveResult(newScore)
       } else {
         setIndex((i) => i + 1)
         setSelected(null)
@@ -107,6 +117,20 @@ export default function Quiz() {
           <p className="text-gray-600 dark:text-gray-300 mb-8 text-lg">
             {pct >= 80 ? 'እጅግ በጣም ጥሩ! (Sehr gut!)' : pct >= 50 ? 'ጥሩ ሙከራ! መለማመዱን ይቀጥሉ።' : 'ተስፋ አይቁረጡ — ፍላሽ ካርዶችን ይለማመዱ!'}
           </p>
+          {saveFailed && (
+            <div
+              role="alert"
+              className="mb-6 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 rounded-xl px-4 py-3 text-sm text-amber-800 dark:text-amber-300"
+            >
+              ውጤቱ አልተቀመጠም።{' '}
+              <button
+                onClick={() => saveResult(score)}
+                className="font-bold underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded"
+              >
+                እንደገና ለማስቀመጥ ይሞክሩ
+              </button>
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => setPhase('setup')}

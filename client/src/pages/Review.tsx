@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { api } from '../api'
+import { api, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
 import Spinner from '../components/Spinner'
+import ErrorMessage from '../components/ErrorMessage'
 import type { ReviewWord } from '../types'
 
 export default function Review() {
@@ -13,21 +14,29 @@ export default function Review() {
   const [known, setKnown] = useState(0)
   const [unknown, setUnknown] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [totalDue, setTotalDue] = useState(0)
 
-  useEffect(() => {
+  const load = useCallback(() => {
     if (!user) {
       setLoading(false)
       return
     }
+    setLoading(true)
+    setError('')
     api
       .get<{ items: ReviewWord[]; total: number }>('/api/progress/due?limit=20')
       .then((res) => {
         setWords(res.items)
         setTotalDue(res.total)
       })
+      .catch((err) => setError(toAmharicError(err)))
       .finally(() => setLoading(false))
   }, [user])
+
+  useEffect(() => {
+    load()
+  }, [load])
 
   const card = words[index]
   const done = !loading && words.length > 0 && index >= words.length
@@ -59,6 +68,14 @@ export default function Review() {
 
   if (loading) {
     return <Spinner />
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-2xl mx-auto px-6 py-12">
+        <ErrorMessage message={error} onRetry={load} />
+      </div>
+    )
   }
 
   if (words.length === 0 && !done) {
