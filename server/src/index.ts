@@ -2,6 +2,7 @@ import 'express-async-errors'
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
 import crypto from 'node:crypto'
 import path from 'node:path'
 import fs from 'node:fs'
@@ -39,6 +40,27 @@ function inlineScriptHashes(distDir: string): string[] {
 await seedDatabase()
 
 const app = express()
+// Render (and most hosts) put the app behind one reverse proxy. Trust a single hop so
+// express-rate-limit keys on the real client IP from X-Forwarded-For, not the proxy's.
+app.set('trust proxy', 1)
+
+// Tight limiter for credential endpoints to blunt brute-force / credential-stuffing.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many attempts. Please try again in a few minutes.' },
+})
+
+// Looser limiter for the rest of the API as a general abuse backstop.
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests. Please slow down.' },
+})
 
 app.use(
   helmet({
@@ -63,6 +85,11 @@ app.use(express.json())
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() })
 })
+
+// Stricter limit on the two credential endpoints; looser limit on everything else under /api.
+app.use('/api/auth/login', authLimiter)
+app.use('/api/auth/register', authLimiter)
+app.use('/api', apiLimiter)
 
 app.use('/api/auth', authRouter)
 app.use('/api/vocabulary', vocabularyRouter)
