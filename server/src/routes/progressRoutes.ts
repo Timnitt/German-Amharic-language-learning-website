@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { all, get, run } from '../db.js'
 import { requireAuth, type AuthedRequest } from '../auth.js'
 import { computeStreaks, sm2 } from '../learning.js'
+import { levelSchema } from '../validation.js'
 
 export const progressRouter = Router()
 
@@ -67,7 +68,15 @@ progressRouter.post('/review', async (req: AuthedRequest, res) => {
 
 progressRouter.get('/due', async (req: AuthedRequest, res) => {
   const userId = req.user!.userId
-  const level = typeof req.query.level === 'string' ? req.query.level : null
+  let level: string | null = null
+  if (req.query.level !== undefined) {
+    const parsedLevel = levelSchema.safeParse(req.query.level)
+    if (!parsedLevel.success) {
+      res.status(400).json({ error: 'Invalid level. Use one of A1, A2, B1, B2.' })
+      return
+    }
+    level = parsedLevel.data
+  }
   const limit = Math.min(Math.max(Number(req.query.limit) || 20, 1), 50)
 
   const levelFilter = level ? 'AND v.level = ?' : ''

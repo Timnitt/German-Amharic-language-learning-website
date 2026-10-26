@@ -3,11 +3,17 @@ import { z } from 'zod'
 import { all, run, type VocabRow } from '../db.js'
 import { requireAuth, type AuthedRequest } from '../auth.js'
 import { buildQuizQuestions } from '../learning.js'
+import { levelSchema } from '../validation.js'
 
 export const quizRouter = Router()
 
 quizRouter.get('/', async (req, res) => {
-  const level = typeof req.query.level === 'string' ? req.query.level : 'A1'
+  const parsedLevel = levelSchema.safeParse(req.query.level ?? 'A1')
+  if (!parsedLevel.success) {
+    res.status(400).json({ error: 'Invalid level. Use one of A1, A2, B1, B2.' })
+    return
+  }
+  const level = parsedLevel.data
   const count = Math.min(Math.max(Number(req.query.count) || 10, 3), 20)
 
   const pool = await all<VocabRow>('SELECT * FROM vocabulary WHERE level = ?', [level])
@@ -20,7 +26,7 @@ quizRouter.get('/', async (req, res) => {
 })
 
 const submitSchema = z.object({
-  level: z.string().min(1),
+  level: levelSchema,
   score: z.number().int().min(0),
   total: z.number().int().min(1).max(50),
 })
