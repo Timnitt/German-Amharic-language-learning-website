@@ -58,6 +58,19 @@ body {
   border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
 }
 
+/* Skip-to-content link: off-screen until focused */
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -3rem;
+  z-index: 100;
+  transition: top 0.15s;
+  @apply bg-blue-700 text-white font-bold px-4 py-2 rounded-lg;
+}
+.skip-link:focus {
+  top: 0.5rem;
+}
+
 /* Flashcard 3D flip */
 .flip-card {
   perspective: 1200px;
@@ -74,6 +87,13 @@ body {
 }
 .flip-back {
   transform: rotateY(180deg);
+}
+
+/* Respect users who prefer less motion: drop the flip animation (state still changes) */
+@media (prefers-reduced-motion: reduce) {
+  .flip-inner {
+    transition: none;
+  }
 }
 
 /* Lesson markdown content */

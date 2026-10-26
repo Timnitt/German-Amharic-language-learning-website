@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
-import { api } from '../api'
+import { api, toAmharicError } from '../api'
+import Spinner from '../components/Spinner'
+import ErrorMessage from '../components/ErrorMessage'
+import { usePageTitle } from '../usePageTitle'
 import type { VocabEntry, VocabMeta } from '../types'
 
 const categoryLabels: Record<string, string> = {
@@ -47,12 +50,16 @@ const categoryLabels: Record<string, string> = {
 }
 
 export default function Vocabulary() {
+  usePageTitle('የቃላት ዝርዝር')
   const [meta, setMeta] = useState<VocabMeta | null>(null)
   const [items, setItems] = useState<VocabEntry[]>([])
   const [level, setLevel] = useState('')
   const [category, setCategory] = useState('')
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  // Bumped to force the search effect to re-run on retry.
+  const [reload, setReload] = useState(0)
 
   useEffect(() => {
     api.get<VocabMeta>('/api/vocabulary/meta').then(setMeta).catch(() => {})
@@ -65,14 +72,18 @@ export default function Vocabulary() {
     if (search) params.set('search', search)
     const timer = setTimeout(() => {
       setLoading(true)
+      setError('')
       api
         .get<{ items: VocabEntry[] }>(`/api/vocabulary?${params}`)
         .then((res) => setItems(res.items))
-        .catch(() => setItems([]))
+        .catch((err) => {
+          setItems([])
+          setError(toAmharicError(err))
+        })
         .finally(() => setLoading(false))
     }, 200)
     return () => clearTimeout(timer)
-  }, [level, category, search])
+  }, [level, category, search, reload])
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-12">
@@ -89,11 +100,13 @@ export default function Vocabulary() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="ቃል ይፈልጉ… (ጀርመንኛ ወይም አማርኛ)"
+          aria-label="ቃል ይፈልጉ"
           className="flex-1 border-2 border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-white dark:bg-night focus:outline-none focus:border-blue-600"
         />
         <select
           value={level}
           onChange={(e) => setLevel(e.target.value)}
+          aria-label="በደረጃ ያጣሩ"
           className="border-2 border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-white dark:bg-night focus:outline-none focus:border-blue-600 cursor-pointer"
         >
           <option value="">ሁሉም ደረጃ</option>
@@ -106,6 +119,7 @@ export default function Vocabulary() {
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
+          aria-label="በምድብ ያጣሩ"
           className="border-2 border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-white dark:bg-night focus:outline-none focus:border-blue-600 cursor-pointer"
         >
           <option value="">ሁሉም ምድብ</option>
@@ -118,7 +132,9 @@ export default function Vocabulary() {
       </div>
 
       {loading ? (
-        <div className="py-16 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
+        <Spinner />
+      ) : error ? (
+        <ErrorMessage message={error} onRetry={() => setReload((n) => n + 1)} />
       ) : items.length === 0 ? (
         <div className="py-16 text-center text-gray-400 dark:text-gray-400 text-lg">ምንም ቃል አልተገኘም።</div>
       ) : (

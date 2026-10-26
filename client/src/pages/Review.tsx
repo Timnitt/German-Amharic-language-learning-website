@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { api } from '../api'
+import { api, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
+import Spinner from '../components/Spinner'
+import ErrorMessage from '../components/ErrorMessage'
+import { usePageTitle } from '../usePageTitle'
 import type { ReviewWord } from '../types'
 
 export default function Review() {
+  usePageTitle('የዕለት ክለሳ')
   const { user } = useAuth()
   const [words, setWords] = useState<ReviewWord[]>([])
   const [index, setIndex] = useState(0)
@@ -12,21 +16,29 @@ export default function Review() {
   const [known, setKnown] = useState(0)
   const [unknown, setUnknown] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [totalDue, setTotalDue] = useState(0)
 
-  useEffect(() => {
+  const load = useCallback(() => {
     if (!user) {
       setLoading(false)
       return
     }
+    setLoading(true)
+    setError('')
     api
       .get<{ items: ReviewWord[]; total: number }>('/api/progress/due?limit=20')
       .then((res) => {
         setWords(res.items)
         setTotalDue(res.total)
       })
+      .catch((err) => setError(toAmharicError(err)))
       .finally(() => setLoading(false))
   }, [user])
+
+  useEffect(() => {
+    load()
+  }, [load])
 
   const card = words[index]
   const done = !loading && words.length > 0 && index >= words.length
@@ -57,7 +69,15 @@ export default function Review() {
   }
 
   if (loading) {
-    return <div className="py-24 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
+    return <Spinner />
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-2xl mx-auto px-6 py-12">
+        <ErrorMessage message={error} onRetry={load} />
+      </div>
+    )
   }
 
   if (words.length === 0 && !done) {
@@ -133,19 +153,22 @@ export default function Review() {
 
       {card && (
         <>
-          <div
-            className={`flip-card cursor-pointer select-none ${flipped ? 'flipped' : ''}`}
+          <button
+            type="button"
+            aria-pressed={flipped}
+            aria-label={flipped ? 'መልሱን ለመደበቅ ካርዱን ይገልብጡ' : 'መልሱን ለማየት ካርዱን ይገልብጡ'}
+            className={`flip-card block w-full cursor-pointer select-none rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${flipped ? 'flipped' : ''}`}
             onClick={() => setFlipped((f) => !f)}
           >
             <div className="flip-inner relative h-72">
-              <div className="flip-face absolute inset-0 bg-paper dark:bg-night-raised border-2 border-gray-300 dark:border-gray-700 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm">
+              <div aria-hidden={flipped} className="flip-face absolute inset-0 bg-paper dark:bg-night-raised border-2 border-gray-300 dark:border-gray-700 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm">
                 <span className="text-xs font-bold uppercase tracking-widest text-blue-700 dark:text-blue-400 mb-4">
                   ጀርመንኛ
                 </span>
                 <span className="text-4xl font-black text-gray-900 dark:text-gray-100 text-center">{card.german}</span>
                 <span className="mt-6 text-sm text-gray-400 dark:text-gray-400">ለመገልበጥ ይንኩ ↻</span>
               </div>
-              <div className="flip-face flip-back absolute inset-0 bg-gray-800 text-blue-50 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm dark:bg-blue-950 dark:border-2 dark:border-blue-900">
+              <div aria-hidden={!flipped} className="flip-face flip-back absolute inset-0 bg-gray-800 text-blue-50 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm dark:bg-blue-950 dark:border-2 dark:border-blue-900">
                 <span className="text-xs font-bold uppercase tracking-widest text-blue-400 mb-4">
                   አማርኛ
                 </span>
@@ -160,7 +183,10 @@ export default function Review() {
                 )}
               </div>
             </div>
-          </div>
+          </button>
+          <p className="sr-only" aria-live="polite">
+            {flipped ? `${card.amharic}${card.pronunciation ? `, አነባበብ ${card.pronunciation}` : ''}` : ''}
+          </p>
 
           <div className="flex gap-4 mt-8">
             <button

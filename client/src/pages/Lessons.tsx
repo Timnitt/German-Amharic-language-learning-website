@@ -1,18 +1,30 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { api } from '../api'
+import { api, toAmharicError } from '../api'
+import Spinner from '../components/Spinner'
+import ErrorMessage from '../components/ErrorMessage'
+import { usePageTitle } from '../usePageTitle'
 import type { LessonSummary } from '../types'
 
 export default function Lessons() {
+  usePageTitle('ትምህርቶች')
   const [lessons, setLessons] = useState<LessonSummary[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true)
+    setError('')
     api
       .get<{ lessons: LessonSummary[] }>('/api/lessons')
       .then((res) => setLessons(res.lessons))
+      .catch((err) => setError(toAmharicError(err)))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => {
+    load()
+  }, [load])
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
@@ -50,7 +62,9 @@ export default function Lessons() {
 
       <h2 className="text-2xl font-black text-gray-900 dark:text-gray-100 mb-6">የሰዋስው ትምህርቶች</h2>
       {loading ? (
-        <div className="py-16 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
+        <Spinner />
+      ) : error ? (
+        <ErrorMessage message={error} onRetry={load} />
       ) : (
         <div className="space-y-8">
           {lessons.map((lesson) => (

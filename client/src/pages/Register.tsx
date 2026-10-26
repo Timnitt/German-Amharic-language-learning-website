@@ -1,8 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../AuthContext'
+import { toAmharicError } from '../api'
+import { usePageTitle } from '../usePageTitle'
 
 export default function Register() {
+  usePageTitle('ነፃ ይመዝገቡ')
   const { register } = useAuth()
   const navigate = useNavigate()
   const [name, setName] = useState('')
@@ -19,7 +22,7 @@ export default function Register() {
       await register(name, email, password)
       navigate('/dashboard')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'መመዝገብ አልተቻለም')
+      setError(toAmharicError(err))
     } finally {
       setBusy(false)
     }
