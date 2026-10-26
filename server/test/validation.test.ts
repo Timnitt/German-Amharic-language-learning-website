@@ -1,5 +1,19 @@
 import { describe, expect, it } from 'vitest'
-import { passwordSchema } from '../src/validation.js'
+import { levelSchema, passwordSchema } from '../src/validation.js'
+
+describe('levelSchema', () => {
+  it('accepts the four CEFR levels', () => {
+    for (const level of ['A1', 'A2', 'B1', 'B2']) {
+      expect(levelSchema.safeParse(level).success).toBe(true)
+    }
+  })
+
+  it('rejects unknown or malformed levels', () => {
+    for (const bad of ['Z9', 'a1', 'C1', '', 1, null, ['A1']]) {
+      expect(levelSchema.safeParse(bad).success).toBe(false)
+    }
+  })
+})
 
 describe('passwordSchema', () => {
   it('accepts a password with 8+ chars including a letter and a digit', () => {
