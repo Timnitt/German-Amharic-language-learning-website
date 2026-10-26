@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../AuthContext'
+import { toAmharicError } from '../api'
 
 export default function Login() {
   const { login } = useAuth()
@@ -18,7 +19,7 @@ export default function Login() {
       await login(email, password)
       navigate('/dashboard')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'መግባት አልተቻለም')
+      setError(toAmharicError(err))
     } finally {
       setBusy(false)
     }
@@ -30,7 +31,7 @@ export default function Login() {
       await login('demo@example.com', 'demo1234')
       navigate('/dashboard')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'መግባት አልተቻለም')
+      setError(toAmharicError(err))
     } finally {
       setBusy(false)
     }
