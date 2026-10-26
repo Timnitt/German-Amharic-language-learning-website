@@ -1,9 +1,8 @@
 import { Router } from 'express'
 import { all, type VocabRow } from '../db.js'
+import { LEVELS, MAX_SEARCH_LENGTH } from '../validation.js'
 
 export const vocabularyRouter = Router()
-
-const LEVELS = ['A1', 'A2', 'B1', 'B2'] as const
 
 vocabularyRouter.get('/meta', async (_req, res) => {
   const categories = await all<{ category: string }>(
@@ -30,11 +29,11 @@ vocabularyRouter.get('/', async (req, res) => {
   }
   if (typeof category === 'string' && category) {
     conditions.push('category = ?')
-    params.push(category)
+    params.push(category.slice(0, MAX_SEARCH_LENGTH))
   }
   if (typeof search === 'string' && search.trim()) {
     conditions.push('(german LIKE ? OR amharic LIKE ?)')
-    const term = `%${search.trim()}%`
+    const term = `%${search.trim().slice(0, MAX_SEARCH_LENGTH)}%`
     params.push(term, term)
   }
 
