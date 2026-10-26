@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { api } from '../api'
 import { useAuth } from '../AuthContext'
+import { usePageTitle } from '../usePageTitle'
 import type { VocabMeta, DashboardStats } from '../types'
 
 const features = [
@@ -43,6 +44,7 @@ const features = [
 ]
 
 export default function Home() {
+  usePageTitle('')
   const { user } = useAuth()
   const [meta, setMeta] = useState<VocabMeta | null>(null)
   const [dueCount, setDueCount] = useState(0)

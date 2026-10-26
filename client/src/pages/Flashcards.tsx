@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../AuthContext'
 import Spinner from '../components/Spinner'
+import { usePageTitle } from '../usePageTitle'
 import type { VocabEntry, Level } from '../types'
 
 function shuffle<T>(arr: T[]): T[] {
@@ -15,6 +16,7 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function Flashcards() {
+  usePageTitle('ፍላሽ ካርዶች')
   const { user } = useAuth()
   const [level, setLevel] = useState<Level>('A1')
   const [cards, setCards] = useState<VocabEntry[]>([])
@@ -124,19 +126,22 @@ export default function Flashcards() {
             ካርድ {index + 1} / {cards.length}
           </p>
 
-          <div
-            className={`flip-card cursor-pointer select-none ${flipped ? 'flipped' : ''}`}
+          <button
+            type="button"
+            aria-pressed={flipped}
+            aria-label={flipped ? 'መልሱን ለመደበቅ ካርዱን ይገልብጡ' : 'መልሱን ለማየት ካርዱን ይገልብጡ'}
+            className={`flip-card block w-full cursor-pointer select-none rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${flipped ? 'flipped' : ''}`}
             onClick={() => setFlipped((f) => !f)}
           >
             <div className="flip-inner relative h-72">
-              <div className="flip-face absolute inset-0 bg-paper dark:bg-night-raised border-2 border-gray-300 dark:border-gray-700 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm">
+              <div aria-hidden={flipped} className="flip-face absolute inset-0 bg-paper dark:bg-night-raised border-2 border-gray-300 dark:border-gray-700 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm">
                 <span className="text-xs font-bold uppercase tracking-widest text-blue-700 dark:text-blue-400 mb-4">
                   ጀርመንኛ
                 </span>
                 <span className="text-4xl font-black text-gray-900 dark:text-gray-100 text-center">{card.german}</span>
                 <span className="mt-6 text-sm text-gray-400 dark:text-gray-400">ለመገልበጥ ይንኩ ↻</span>
               </div>
-              <div className="flip-face flip-back absolute inset-0 bg-gray-800 text-blue-50 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm dark:bg-blue-950 dark:border-2 dark:border-blue-900">
+              <div aria-hidden={!flipped} className="flip-face flip-back absolute inset-0 bg-gray-800 text-blue-50 handwritten-border flex flex-col items-center justify-center p-8 shadow-sm dark:bg-blue-950 dark:border-2 dark:border-blue-900">
                 <span className="text-xs font-bold uppercase tracking-widest text-blue-400 mb-4">
                   አማርኛ
                 </span>
@@ -151,7 +156,10 @@ export default function Flashcards() {
                 )}
               </div>
             </div>
-          </div>
+          </button>
+          <p className="sr-only" aria-live="polite">
+            {flipped ? `${card.amharic}${card.pronunciation ? `, አነባበብ ${card.pronunciation}` : ''}` : ''}
+          </p>
 
           <div className="flex gap-4 mt-8">
             <button

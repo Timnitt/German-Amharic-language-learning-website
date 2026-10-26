@@ -2,8 +2,10 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../AuthContext'
 import { toAmharicError } from '../api'
+import { usePageTitle } from '../usePageTitle'
 
 export default function Login() {
+  usePageTitle('ግባ')
   const { login } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')

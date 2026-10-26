@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../AuthContext'
 import ThemeToggle from './ThemeToggle'
@@ -39,8 +39,21 @@ export default function Layout({ children }: { children: ReactNode }) {
     navigate('/')
   }
 
+  // Close the mobile menu on Escape.
+  useEffect(() => {
+    if (!menuOpen) return
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [menuOpen])
+
   return (
     <div className="min-h-screen flex flex-col">
+      <a href="#main-content" className="skip-link">
+        ወደ ይዘቱ ዝለል
+      </a>
       <header className="border-b-2 border-stone-200/60 bg-paper/90 dark:border-gray-800 dark:bg-night/90 sticky top-0 backdrop-blur-md z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-3 group">
@@ -100,17 +113,20 @@ export default function Layout({ children }: { children: ReactNode }) {
             <ThemeToggle />
   
             <button
-              className="md:hidden text-stone-700 dark:text-gray-300 text-2xl cursor-pointer"
+              type="button"
+              className="md:hidden text-stone-700 dark:text-gray-300 text-2xl cursor-pointer rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               onClick={() => setMenuOpen((open) => !open)}
-              aria-label="Menu"
+              aria-label={menuOpen ? 'ዝርዝሩን ዝጋ' : 'ዝርዝሩን ክፈት'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
             >
-              ☰
+              {menuOpen ? '✕' : '☰'}
             </button>
           </div>
         </div>
 
         {menuOpen && (
-          <nav className="md:hidden border-t border-stone-200 dark:border-gray-800 px-6 py-4 flex flex-col space-y-3 text-lg font-medium text-stone-600 dark:text-gray-300 bg-paper dark:bg-night">
+          <nav id="mobile-menu" aria-label="ዋና ዝርዝር" className="md:hidden border-t border-stone-200 dark:border-gray-800 px-6 py-4 flex flex-col space-y-3 text-lg font-medium text-stone-600 dark:text-gray-300 bg-paper dark:bg-night">
             <NavLinks onClick={() => setMenuOpen(false)} />
             {user ? (
               <>
@@ -130,7 +146,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         )}
       </header>
 
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">{children}</main>
 
       <footer className="bg-stone-900 text-stone-400 text-sm py-12 border-t border-stone-800 dark:bg-gray-950 dark:border-gray-800">
         <div className="max-w-5xl mx-auto px-6 text-center space-y-4">

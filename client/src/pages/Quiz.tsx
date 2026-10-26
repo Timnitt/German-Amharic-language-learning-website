@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom'
 import { api, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
 import Spinner from '../components/Spinner'
+import { usePageTitle } from '../usePageTitle'
 import type { QuizQuestion, Level } from '../types'
 
 type Phase = 'setup' | 'loading' | 'playing' | 'finished'
 
 export default function Quiz() {
+  usePageTitle('የቃላት ፈተና')
   const { user } = useAuth()
   const [phase, setPhase] = useState<Phase>('setup')
   const [level, setLevel] = useState<Level>('A1')
@@ -189,18 +191,29 @@ export default function Quiz() {
             else if (i === selected) style = 'bg-red-50 dark:bg-red-950/40 border-red-400 dark:border-red-600 text-red-700 dark:text-red-400'
             else style = 'bg-white dark:bg-night-raised border-gray-200 dark:border-gray-800 text-gray-400 dark:text-gray-400'
           }
+          // Don't rely on color alone: mark the correct answer with ✓ and a wrong pick with ✗.
+          let marker = ''
+          if (selected !== null) {
+            if (i === question.answer) marker = '✓'
+            else if (i === selected) marker = '✗'
+          }
           return (
             <button
               key={i}
               onClick={() => choose(i)}
               disabled={selected !== null}
-              className={`w-full text-left border-2 rounded-xl px-5 py-4 font-bold text-lg transition cursor-pointer disabled:cursor-default ${style}`}
+              className={`w-full flex items-center justify-between gap-3 text-left border-2 rounded-xl px-5 py-4 font-bold text-lg transition cursor-pointer disabled:cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-paper dark:focus-visible:ring-offset-night ${style}`}
             >
-              {option}
+              <span>{option}</span>
+              {marker && <span aria-hidden="true" className="text-xl shrink-0">{marker}</span>}
             </button>
           )
         })}
       </div>
+
+      <p className="sr-only" role="status" aria-live="assertive">
+        {selected !== null ? (selected === question.answer ? 'ትክክል' : 'ስህተት') : ''}
+      </p>
 
       {selected !== null && question.example && (
         <p className="mt-6 text-center text-gray-500 dark:text-gray-400 italic">ምሳሌ፦ „{question.example}“</p>

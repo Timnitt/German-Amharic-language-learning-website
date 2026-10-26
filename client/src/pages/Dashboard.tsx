@@ -4,6 +4,7 @@ import { api, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
 import ErrorMessage from '../components/ErrorMessage'
 import Spinner from '../components/Spinner'
+import { usePageTitle } from '../usePageTitle'
 import type { DashboardStats, QuizResult, LessonSummary, LessonCompletion } from '../types'
 
 function StatCard({ label, value, accent }: { label: string; value: string | number; accent?: boolean }) {
@@ -20,6 +21,7 @@ function StatCard({ label, value, accent }: { label: string; value: string | num
 }
 
 export default function Dashboard() {
+  usePageTitle('ዳሽቦርድ')
   const { user } = useAuth()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [history, setHistory] = useState<QuizResult[]>([])
