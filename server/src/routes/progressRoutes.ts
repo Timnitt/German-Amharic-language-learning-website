@@ -2,58 +2,11 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { all, get, run } from '../db.js'
 import { requireAuth, type AuthedRequest } from '../auth.js'
+import { computeStreaks, sm2 } from '../learning.js'
 
 export const progressRouter = Router()
 
 progressRouter.use(requireAuth)
-
-function computeStreaks(dates: string[]): { currentStreak: number; longestStreak: number } {
-  if (dates.length === 0) return { currentStreak: 0, longestStreak: 0 }
-
-  const todayStr = new Date().toISOString().slice(0, 10)
-  const yesterdayStr = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
-
-  let currentStreak = 0
-  if (dates[0] === todayStr || dates[0] === yesterdayStr) {
-    currentStreak = 1
-    for (let i = 1; i < dates.length; i++) {
-      const prev = new Date(dates[i - 1])
-      const curr = new Date(dates[i])
-      const diff = (prev.getTime() - curr.getTime()) / 86400000
-      if (Math.round(diff) === 1) currentStreak++
-      else break
-    }
-  }
-
-  let longestStreak = 1
-  let streak = 1
-  for (let i = 1; i < dates.length; i++) {
-    const prev = new Date(dates[i - 1])
-    const curr = new Date(dates[i])
-    const diff = (prev.getTime() - curr.getTime()) / 86400000
-    if (Math.round(diff) === 1) {
-      streak++
-      longestStreak = Math.max(longestStreak, streak)
-    } else {
-      streak = 1
-    }
-  }
-  longestStreak = Math.max(longestStreak, currentStreak)
-
-  return { currentStreak, longestStreak }
-}
-
-function sm2(correct: boolean, prevEase: number, prevInterval: number, prevReps: number) {
-  if (!correct) {
-    return { ease: Math.max(1.3, prevEase - 0.2), interval: 1, reps: 0 }
-  }
-  const ease = Math.max(1.3, prevEase + 0.1)
-  let interval: number
-  if (prevReps === 0) interval = 1
-  else if (prevReps === 1) interval = 3
-  else interval = Math.round(prevInterval * ease)
-  return { ease, interval, reps: prevReps + 1 }
-}
 
 const reviewSchema = z.object({
   vocabId: z.number().int().positive(),
