@@ -120,8 +120,15 @@ app.use((_req, res) => {
 })
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  // Log the full error (stack, DB text) server-side only. The client always gets a generic
+  // message in production; outside production the message is included to aid local debugging,
+  // but never the stack trace.
   console.error(err)
-  res.status(500).json({ error: 'Internal server error' })
+  const body =
+    process.env.NODE_ENV === 'production'
+      ? { error: 'Internal server error' }
+      : { error: 'Internal server error', detail: err instanceof Error ? err.message : String(err) }
+  res.status(500).json(body)
 })
 
 app.listen(PORT, () => {
