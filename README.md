@@ -137,7 +137,7 @@ npm start        # single server on :3001
 | Variable | Default | Notes |
 |---|---|---|
 | `PORT` | `3001` | Set automatically by the host in production |
-| `JWT_SECRET` | dev fallback | Set a real secret in production |
+| `JWT_SECRET` | dev fallback | **Required in production**: at least 32 characters, or the server refuses to start. A dev fallback is used only outside production |
 | `DEMO_PASSWORD` | `demo1234` | Password for the seeded demo account |
 | `DATA_DIR` | `server/data` | Where the SQLite file lives |
 | `TURSO_DATABASE_URL` | local file | libsql:// URL from Turso dashboard |

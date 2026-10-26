@@ -1,7 +1,30 @@
 import jwt from 'jsonwebtoken'
 import type { Request, Response, NextFunction } from 'express'
 
-export const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production'
+const DEV_SECRET = 'dev-secret-change-in-production'
+const MIN_SECRET_LENGTH = 32
+
+/**
+ * Resolves the JWT secret for the current environment.
+ * In production a real `JWT_SECRET` of at least 32 chars is mandatory - the dev
+ * fallback is never used, so a misconfigured deploy fails fast instead of signing
+ * tokens with a public, guessable key. Exported so it can be unit-tested without
+ * starting the server.
+ */
+export function resolveJwtSecret(env: NodeJS.ProcessEnv = process.env): string {
+  const secret = env.JWT_SECRET
+  if (env.NODE_ENV === 'production') {
+    if (!secret || secret.length < MIN_SECRET_LENGTH) {
+      throw new Error(
+        `JWT_SECRET must be set to at least ${MIN_SECRET_LENGTH} characters in production`,
+      )
+    }
+    return secret
+  }
+  return secret || DEV_SECRET
+}
+
+export const JWT_SECRET = resolveJwtSecret()
 const TOKEN_TTL = '7d'
 
 export interface AuthPayload {
