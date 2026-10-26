@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 import { api } from '../api'
 import { useAuth } from '../AuthContext'
 import type { Lesson, LessonCompletion } from '../types'
@@ -32,8 +33,11 @@ export default function LessonDetail() {
       .catch(() => {})
   }, [user, id])
 
+  // Lesson content is markdown rendered to HTML, then sanitized before it is injected
+  // via dangerouslySetInnerHTML, so a malicious lesson body can't inject scripts.
   const html = useMemo(
-    () => (lesson ? (marked.parse(lesson.content, { async: false }) as string) : ''),
+    () =>
+      lesson ? DOMPurify.sanitize(marked.parse(lesson.content, { async: false }) as string) : '',
     [lesson],
   )
 
