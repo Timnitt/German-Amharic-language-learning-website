@@ -79,7 +79,18 @@ app.use(
   }),
 )
 
-app.use(cors())
+// CORS allowlist from CORS_ORIGINS (comma-separated). In production the SPA is served
+// from the same origin as the API, so the default is an empty allowlist (CORS disabled).
+// In dev the Vite dev server runs on a different origin, so default to it.
+const corsOrigins = (
+  process.env.CORS_ORIGINS ??
+  (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5173')
+)
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean)
+
+app.use(cors({ origin: corsOrigins.length > 0 ? corsOrigins : false }))
 app.use(express.json())
 
 app.get('/api/health', (_req, res) => {
