@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import { useAuth } from './AuthContext'
 import Layout from './components/Layout'
+import ErrorBoundary from './components/ErrorBoundary'
 import Home from './pages/Home'
 import Vocabulary from './pages/Vocabulary'
 import Flashcards from './pages/Flashcards'
@@ -12,6 +13,7 @@ import Review from './pages/Review'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import NotFound from './pages/NotFound'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth()
@@ -25,27 +27,29 @@ function RequireAuth({ children }: { children: ReactNode }) {
 export default function App() {
   return (
     <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/flashcards" element={<Flashcards />} />
-        <Route path="/review" element={<Review />} />
-        <Route path="/quiz" element={<Quiz />} />
-        <Route path="/lessons" element={<Lessons />} />
-        <Route path="/lessons/vocabulary" element={<Vocabulary />} />
-        <Route path="/lessons/:id" element={<LessonDetail />} />
-        <Route path="/vocabulary" element={<Navigate to="/lessons/vocabulary" replace />} />
-        <Route
-          path="/dashboard"
-          element={
-            <RequireAuth>
-              <Dashboard />
-            </RequireAuth>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/flashcards" element={<Flashcards />} />
+          <Route path="/review" element={<Review />} />
+          <Route path="/quiz" element={<Quiz />} />
+          <Route path="/lessons" element={<Lessons />} />
+          <Route path="/lessons/vocabulary" element={<Vocabulary />} />
+          <Route path="/lessons/:id" element={<LessonDetail />} />
+          <Route path="/vocabulary" element={<Navigate to="/lessons/vocabulary" replace />} />
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ErrorBoundary>
     </Layout>
   )
 }
