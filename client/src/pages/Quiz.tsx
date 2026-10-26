@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
+import Spinner from '../components/Spinner'
 import type { QuizQuestion, Level } from '../types'
 
-type Phase = 'setup' | 'playing' | 'finished'
+type Phase = 'setup' | 'loading' | 'playing' | 'finished'
 
 export default function Quiz() {
   const { user } = useAuth()
@@ -19,6 +20,7 @@ export default function Quiz() {
 
   async function start() {
     setError('')
+    setPhase('loading')
     try {
       const res = await api.get<{ questions: QuizQuestion[] }>(`/api/quiz?level=${level}&count=10`)
       setQuestions(res.questions)
@@ -29,6 +31,7 @@ export default function Quiz() {
       setPhase('playing')
     } catch (err) {
       setError(toAmharicError(err))
+      setPhase('setup')
     }
   }
 
@@ -60,6 +63,10 @@ export default function Quiz() {
         setSelected(null)
       }
     }, 1100)
+  }
+
+  if (phase === 'loading') {
+    return <Spinner message="ፈተናውን በማዘጋጀት ላይ…" />
   }
 
   if (phase === 'setup') {

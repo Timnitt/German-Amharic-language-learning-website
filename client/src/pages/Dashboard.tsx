@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
 import ErrorMessage from '../components/ErrorMessage'
+import Spinner from '../components/Spinner'
 import type { DashboardStats, QuizResult, LessonSummary, LessonCompletion } from '../types'
 
 function StatCard({ label, value, accent }: { label: string; value: string | number; accent?: boolean }) {
@@ -59,7 +60,7 @@ export default function Dashboard() {
   }
 
   if (loading || !stats) {
-    return <div className="py-24 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
+    return <Spinner />
   }
 
   const completedIds = new Set(completedLessons.map((c) => c.lesson_id))

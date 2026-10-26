@@ -5,6 +5,7 @@ import DOMPurify from 'dompurify'
 import { api, ApiError, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
 import ErrorMessage from '../components/ErrorMessage'
+import Spinner from '../components/Spinner'
 import type { Lesson, LessonCompletion } from '../types'
 
 export default function LessonDetail() {
@@ -90,7 +91,7 @@ export default function LessonDetail() {
   }
 
   if (loading || !lesson) {
-    return <div className="py-24 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
+    return <Spinner />
   }
 
   return (
