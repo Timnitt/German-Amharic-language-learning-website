@@ -61,7 +61,8 @@ Hosted on a free tier, so the first load after a quiet period can take up to a m
 | Backend | Node.js 22, Express, TypeScript, Zod validation |
 | Database | Turso (libSQL), auto-migrated and seeded on start, local SQLite fallback for dev |
 | Auth | JWT tokens, bcrypt password hashing |
-| CI | GitHub Actions - typecheck and production build on every push and pull request |
+| Testing | Vitest unit tests for spaced repetition, streaks and quiz generation |
+| CI | GitHub Actions - typecheck, tests and production build on every push and pull request |
 | Hosting | Render, auto-deploys from `main` on every push |
 
 ## Architecture
@@ -145,8 +146,9 @@ npm start        # single server on :3001
 ## Roadmap
 
 - [x] Spaced repetition - a daily "words due for review" queue instead of random shuffle
-- [x] CI pipeline - typecheck and build on every push and pull request
-- [ ] Automated tests
+- [x] CI pipeline - typecheck, tests and build on every push and pull request
+- [x] Unit tests for the learning logic (spaced repetition, streaks, quiz generation)
+- [ ] API integration tests, including database migrations
 - [ ] Audio pronunciation for every word
 - [ ] Tigrigna and English interface languages, so the platform serves more of the Horn of Africa community
 - [ ] Docker setup for one-command self-hosting
@@ -154,6 +156,6 @@ npm start        # single server on :3001
 
 ## Author
 
-Built by **Timnit Gebregergis** - [GitHub](https://github.com/Timnitt) · [LinkedIn](https://www.linkedin.com/in/YOUR-PROFILE)
+Built by **Timnit Gebregergis** - [GitHub](https://github.com/Timnitt) · [LinkedIn](https://www.linkedin.com/in/timnitgebregergis)
 
 If this project is useful to you or someone learning German, a ⭐ on the repo helps others find it.

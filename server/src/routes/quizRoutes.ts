@@ -2,26 +2,9 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { all, run, type VocabRow } from '../db.js'
 import { requireAuth, type AuthedRequest } from '../auth.js'
+import { buildQuizQuestions } from '../learning.js'
 
 export const quizRouter = Router()
-
-function shuffle<T>(arr: T[]): T[] {
-  const copy = [...arr]
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[copy[i], copy[j]] = [copy[j], copy[i]]
-  }
-  return copy
-}
-
-export interface QuizQuestion {
-  vocabId: number
-  direction: 'de-am' | 'am-de'
-  prompt: string
-  options: string[]
-  answer: number
-  example: string
-}
 
 quizRouter.get('/', async (req, res) => {
   const level = typeof req.query.level === 'string' ? req.query.level : 'A1'
@@ -33,27 +16,7 @@ quizRouter.get('/', async (req, res) => {
     return
   }
 
-  const questions: QuizQuestion[] = shuffle(pool)
-    .slice(0, count)
-    .map((word) => {
-      const direction: QuizQuestion['direction'] = Math.random() < 0.5 ? 'de-am' : 'am-de'
-      const distractors = shuffle(pool.filter((w) => w.id !== word.id)).slice(0, 3)
-      const correctText = direction === 'de-am' ? word.amharic : word.german
-      const options = shuffle([
-        correctText,
-        ...distractors.map((d) => (direction === 'de-am' ? d.amharic : d.german)),
-      ])
-      return {
-        vocabId: word.id,
-        direction,
-        prompt: direction === 'de-am' ? word.german : word.amharic,
-        options,
-        answer: options.indexOf(correctText),
-        example: word.example_de,
-      }
-    })
-
-  res.json({ level, questions })
+  res.json({ level, questions: buildQuizQuestions(pool, count) })
 })
 
 const submitSchema = z.object({
