@@ -59,13 +59,13 @@ export default function Register() {
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">
-              የይለፍ ቃል <span className="text-gray-400 dark:text-gray-400 font-normal">(ቢያንስ 6 ፊደላት)</span>
+              የይለፍ ቃል <span className="text-gray-400 dark:text-gray-400 font-normal">(ቢያንስ 8 ፊደላት፣ አንድ ፊደልና አንድ ቁጥር)</span>
             </label>
             <input
               id="password"
               type="password"
               required
-              minLength={6}
+              minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border-2 border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-white dark:bg-night focus:outline-none focus:border-blue-600"
