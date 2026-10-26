@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
+import Spinner from '../components/Spinner'
 import type { LessonSummary } from '../types'
 
 export default function Lessons() {
@@ -50,7 +51,7 @@ export default function Lessons() {
 
       <h2 className="text-2xl font-black text-gray-900 dark:text-gray-100 mb-6">የሰዋስው ትምህርቶች</h2>
       {loading ? (
-        <div className="py-16 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
+        <Spinner />
       ) : (
         <div className="space-y-8">
           {lessons.map((lesson) => (
