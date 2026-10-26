@@ -43,7 +43,7 @@ export default function ThemeToggle() {
       type="button"
       role="switch"
       aria-checked={isDark}
-      aria-label="Dark mode"
+      aria-label={isDark ? 'ብሩህ ገጽታ አድርግ' : 'ጨለማ ገጽታ አድርግ'}
       title={isDark ? 'ብሩህ ገጽታ (Light mode)' : 'ጨለማ ገጽታ (Dark mode)'}
       onClick={toggle}
       className="relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border-2 border-stone-300 bg-stone-200 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-paper dark:border-gray-600 dark:bg-gray-800 dark:focus-visible:ring-offset-night"

@@ -6,6 +6,7 @@ import { api, ApiError, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
 import ErrorMessage from '../components/ErrorMessage'
 import Spinner from '../components/Spinner'
+import { usePageTitle } from '../usePageTitle'
 import type { Lesson, LessonCompletion } from '../types'
 
 export default function LessonDetail() {
@@ -17,6 +18,8 @@ export default function LessonDetail() {
   const [notFound, setNotFound] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  usePageTitle(lesson?.title ?? 'ትምህርት')
 
   const loadLesson = useCallback(() => {
     setLoading(true)

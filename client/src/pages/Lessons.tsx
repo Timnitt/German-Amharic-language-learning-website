@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import { api, toAmharicError } from '../api'
 import Spinner from '../components/Spinner'
 import ErrorMessage from '../components/ErrorMessage'
+import { usePageTitle } from '../usePageTitle'
 import type { LessonSummary } from '../types'
 
 export default function Lessons() {
+  usePageTitle('ትምህርቶች')
   const [lessons, setLessons] = useState<LessonSummary[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')

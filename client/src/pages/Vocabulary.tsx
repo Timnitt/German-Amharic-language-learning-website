@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { api, toAmharicError } from '../api'
 import Spinner from '../components/Spinner'
 import ErrorMessage from '../components/ErrorMessage'
+import { usePageTitle } from '../usePageTitle'
 import type { VocabEntry, VocabMeta } from '../types'
 
 const categoryLabels: Record<string, string> = {
@@ -49,6 +50,7 @@ const categoryLabels: Record<string, string> = {
 }
 
 export default function Vocabulary() {
+  usePageTitle('የቃላት ዝርዝር')
   const [meta, setMeta] = useState<VocabMeta | null>(null)
   const [items, setItems] = useState<VocabEntry[]>([])
   const [level, setLevel] = useState('')
@@ -98,11 +100,13 @@ export default function Vocabulary() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="ቃል ይፈልጉ… (ጀርመንኛ ወይም አማርኛ)"
+          aria-label="ቃል ይፈልጉ"
           className="flex-1 border-2 border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-white dark:bg-night focus:outline-none focus:border-blue-600"
         />
         <select
           value={level}
           onChange={(e) => setLevel(e.target.value)}
+          aria-label="በደረጃ ያጣሩ"
           className="border-2 border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-white dark:bg-night focus:outline-none focus:border-blue-600 cursor-pointer"
         >
           <option value="">ሁሉም ደረጃ</option>
@@ -115,6 +119,7 @@ export default function Vocabulary() {
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
+          aria-label="በምድብ ያጣሩ"
           className="border-2 border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-white dark:bg-night focus:outline-none focus:border-blue-600 cursor-pointer"
         >
           <option value="">ሁሉም ምድብ</option>
