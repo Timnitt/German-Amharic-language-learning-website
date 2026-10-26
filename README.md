@@ -142,6 +142,7 @@ npm start        # single server on :3001
 | `DATA_DIR` | `server/data` | Where the SQLite file lives |
 | `TURSO_DATABASE_URL` | local file | libsql:// URL from Turso dashboard |
 | `TURSO_AUTH_TOKEN` | _(none)_ | Auth token from Turso dashboard |
+| `CORS_ORIGINS` | `http://localhost:5173` (dev), none (prod) | Comma-separated allowlist of browser origins. Empty in production because the SPA is served from the same origin as the API |
 
 ## Roadmap
 
