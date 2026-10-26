@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api'
+import Spinner from '../components/Spinner'
 import type { VocabEntry, VocabMeta } from '../types'
 
 const categoryLabels: Record<string, string> = {
@@ -118,7 +119,7 @@ export default function Vocabulary() {
       </div>
 
       {loading ? (
-        <div className="py-16 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
+        <Spinner />
       ) : items.length === 0 ? (
         <div className="py-16 text-center text-gray-400 dark:text-gray-400 text-lg">ምንም ቃል አልተገኘም።</div>
       ) : (

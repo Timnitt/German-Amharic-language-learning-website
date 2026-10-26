@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../AuthContext'
+import Spinner from '../components/Spinner'
 import type { ReviewWord } from '../types'
 
 export default function Review() {
@@ -57,7 +58,7 @@ export default function Review() {
   }
 
   if (loading) {
-    return <div className="py-24 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
+    return <Spinner />
   }
 
   if (words.length === 0 && !done) {

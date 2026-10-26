@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../AuthContext'
+import Spinner from '../components/Spinner'
 import type { VocabEntry, Level } from '../types'
 
 function shuffle<T>(arr: T[]): T[] {
@@ -95,7 +96,7 @@ export default function Flashcards() {
       )}
 
       {loading ? (
-        <div className="py-24 text-center text-gray-400 dark:text-gray-400 text-lg">በመጫን ላይ…</div>
+        <Spinner />
       ) : done ? (
         <div className="text-center py-12 bg-paper dark:bg-night-raised border-2 border-gray-300 dark:border-gray-700 handwritten-border">
           <div className="text-5xl mb-4">🎉</div>
