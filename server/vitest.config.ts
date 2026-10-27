@@ -15,6 +15,16 @@ export default defineConfig({
     passWithNoTests: false,
     retry: 0,
     restoreMocks: true,
+    coverage: {
+      provider: 'v8',
+      include: ['src/**'],
+      // Content data and the listen() entry point would only inflate the numbers.
+      exclude: ['src/seedData.ts', 'src/index.ts'],
+      reporter: ['text-summary', 'html'],
+      // Floors just under the measured baseline: raise them as coverage grows, never lower
+      // them to get a change through.
+      thresholds: { lines: 95, statements: 95, branches: 90, functions: 90 },
+    },
     // bcrypt + seeding ~1000 rows per file; generous but finite.
     testTimeout: 20000,
     hookTimeout: 30000,
