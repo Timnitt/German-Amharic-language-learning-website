@@ -79,6 +79,18 @@ describe('Login page', () => {
     expect(getToken()).toBeNull()
   })
 
+  it('shows the friendly rate-limit message after too many attempts', async () => {
+    mockFetch({ 'POST /api/auth/login': { status: 429, body: { error: 'Too many attempts. Please try again in a few minutes.' } } })
+    renderPage(<Login />, { url: '/login', path: '/login' })
+
+    await userEvent.type(screen.getByLabelText('ኢሜይል'), 'a@example.com')
+    await userEvent.type(screen.getByLabelText('የይለፍ ቃል'), 'passw0rd!')
+    await userEvent.click(screen.getByRole('button', { name: 'ግባ' }))
+
+    expect(await screen.findByText('በጣም ብዙ ሙከራዎች። እባክዎ ከጥቂት ደቂቃዎች በኋላ እንደገና ይሞክሩ።')).toBeInTheDocument()
+    expect(screen.getByTestId('location')).toHaveTextContent('/login')
+  })
+
   it('logs in with the demo account', async () => {
     const fetchMock = mockFetch({ 'POST /api/auth/login': { body: { token: 'demo-token', user } } })
     renderPage(<Login />, { url: '/login', path: '/login' })

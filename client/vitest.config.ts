@@ -18,7 +18,7 @@ export default defineConfig({
       exclude: ['src/main.tsx'],
       reporter: ['text-summary', 'html'],
       // Coverage floors: raise them, never lower them.
-      thresholds: { lines: 29, statements: 29, branches: 85, functions: 60 },
+      thresholds: { lines: 99, statements: 99, branches: 96, functions: 93 },
     },
   },
 })

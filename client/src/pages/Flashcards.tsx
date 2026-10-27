@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { api } from '../api'
+import { api, toAmharicError } from '../api'
 import { useAuth } from '../AuthContext'
 import Spinner from '../components/Spinner'
+import ErrorMessage from '../components/ErrorMessage'
 import { usePageTitle } from '../usePageTitle'
 import type { VocabEntry, Level } from '../types'
 
@@ -25,9 +26,12 @@ export default function Flashcards() {
   const [known, setKnown] = useState(0)
   const [unknown, setUnknown] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [reload, setReload] = useState(0)
 
   useEffect(() => {
     setLoading(true)
+    setError('')
     api
       .get<{ items: VocabEntry[] }>(`/api/vocabulary?level=${level}`)
       .then((res) => {
@@ -37,8 +41,12 @@ export default function Flashcards() {
         setKnown(0)
         setUnknown(0)
       })
+      .catch((err) => {
+        setCards([])
+        setError(toAmharicError(err))
+      })
       .finally(() => setLoading(false))
-  }, [level])
+  }, [level, reload])
 
   const card = cards[index]
   const done = !loading && cards.length > 0 && index >= cards.length
@@ -99,6 +107,8 @@ export default function Flashcards() {
 
       {loading ? (
         <Spinner />
+      ) : error ? (
+        <ErrorMessage message={error} onRetry={() => setReload((n) => n + 1)} />
       ) : done ? (
         <div className="text-center py-12 bg-paper dark:bg-night-raised border-2 border-gray-300 dark:border-gray-700 handwritten-border">
           <div className="text-5xl mb-4">🎉</div>

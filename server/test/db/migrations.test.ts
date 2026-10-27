@@ -166,6 +166,40 @@ describe('db migrations', () => {
     expect(fk).toEqual([])
   })
 
+  it('keeps foreign keys enforced after rebuilding the level tables', async () => {
+    const dir = newDataDir()
+    await createLegacyDb(dir)
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+    const { all, get, run } = await importDb(dir)
+
+    expect(await get('PRAGMA foreign_keys')).toEqual({ foreign_keys: 1 })
+    await expect(
+      run('INSERT INTO progress (user_id, vocab_id) VALUES (1, 999)'),
+    ).rejects.toThrow(/FOREIGN KEY/)
+    await expect(
+      run('INSERT INTO lesson_progress (user_id, lesson_id) VALUES (1, 999)'),
+    ).rejects.toThrow(/FOREIGN KEY/)
+
+    await run('DELETE FROM vocabulary WHERE id = 9')
+    expect(await all('SELECT vocab_id FROM progress ORDER BY vocab_id')).toEqual([{ vocab_id: 5 }])
+    await run('DELETE FROM lessons WHERE id = 3')
+    expect(await all('SELECT * FROM lesson_progress')).toEqual([])
+  })
+
+  it('rejects levels outside A1-B2 on lessons as well as vocabulary', async () => {
+    const dir = newDataDir()
+    await createLegacyDb(dir)
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+    const { run } = await importDb(dir)
+
+    await expect(
+      run("INSERT INTO lessons (title, level, category, content) VALUES ('Bad', 'C1', 'x', 'c')"),
+    ).rejects.toThrow(/CHECK/)
+    await expect(
+      run("INSERT INTO vocabulary (german, amharic, level, category) VALUES ('Bad', 'x', 'a1', 'x')"),
+    ).rejects.toThrow(/CHECK/)
+  })
+
   it('is a no-op when run again on an up-to-date database', async () => {
     const dir = newDataDir()
     await createLegacyDb(dir)
