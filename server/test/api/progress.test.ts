@@ -63,7 +63,9 @@ describe('POST /api/progress/review', () => {
   it('stores SM-2 scheduling for a first correct answer', async () => {
     const u = await registerUser(app)
     const res = await review(u, wordIds[0], true)
-    const expected = sm2(true, 2.5, 0, 0)
+    // Literal values, so this can't just mirror a changed sm2(): new word, correct answer
+    // -> ease 2.5 + 0.1, due in 1 day, 1 repetition.
+    const expected = { ease: 2.6, interval: 1, reps: 1 }
 
     expect(res.status).toBe(201)
     expect(res.body).toEqual({ saved: true, nextReviewDays: expected.interval })
@@ -95,11 +97,15 @@ describe('POST /api/progress/review', () => {
     expect(third.body.nextReviewDays).toBe(s.interval)
     expect(s.interval).toBeGreaterThan(3)
 
+    // 2.5 -> 2.6 -> 2.7 -> 2.8, intervals 1, 3, round(3 * 2.8) = 8.
+    expect(third.body.nextReviewDays).toBe(8)
+
     const wrong = await review(u, id, false)
     expect(wrong.body.nextReviewDays).toBe(1)
     const row = await progressRow(u, id)
     expect(row).toMatchObject({ correct_count: 3, wrong_count: 1, repetitions: 0, interval_days: 1 })
     expect(row!.ease_factor).toBeCloseTo(sm2(false, s.ease, s.interval, s.reps).ease)
+    expect(row!.ease_factor).toBeCloseTo(2.6)
   })
 
   it.each([
