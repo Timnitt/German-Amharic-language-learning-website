@@ -3,6 +3,48 @@ import { render } from '@testing-library/react'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { vi } from 'vitest'
 import { AuthProvider } from '../src/AuthContext'
+import type { User, VocabEntry } from '../src/types'
+
+export const testUser: User = { id: 1, name: 'Abebe Kebede', email: 'a@example.com', createdAt: '2026-01-01' }
+
+export function word(id: number, german: string, amharic: string, extra: Partial<VocabEntry> = {}): VocabEntry {
+  return {
+    id,
+    german,
+    amharic,
+    pronunciation: '',
+    level: 'A1',
+    category: 'home',
+    example_de: '',
+    example_am: '',
+    ...extra,
+  }
+}
+
+export interface MatchMediaStub {
+  /** Simulates the OS switching its colour scheme. */
+  setDark(dark: boolean): void
+}
+
+/** jsdom has no matchMedia; ThemeToggle needs one. */
+export function stubMatchMedia(initiallyDark = false): MatchMediaStub {
+  const listeners = new Set<(e: MediaQueryListEvent) => void>()
+  let matches = initiallyDark
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    get matches() {
+      return matches
+    },
+    media: query,
+    addEventListener: (_: string, fn: (e: MediaQueryListEvent) => void) => listeners.add(fn),
+    removeEventListener: (_: string, fn: (e: MediaQueryListEvent) => void) => listeners.delete(fn),
+  }))
+  return {
+    setDark(dark) {
+      matches = dark
+      for (const fn of listeners) fn({ matches: dark } as MediaQueryListEvent)
+    },
+  }
+}
 
 /** Requests with no matching route; setup.ts fails the test if any remain. */
 export const unexpectedFetches: string[] = []
