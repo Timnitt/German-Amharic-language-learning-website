@@ -132,6 +132,23 @@ npm run build
 npm start        # single server on :3001
 ```
 
+## Testing
+
+```bash
+npm run verify   # test hygiene check, typecheck (incl. tests), all tests, build
+```
+
+| Where | What |
+|---|---|
+| `server/test/unit/` | Pure logic: spaced repetition, streaks, quiz generation, validation, JWT config |
+| `server/test/api/` | Every endpoint over HTTP (`supertest` on `createApp()`), asserting status, body and DB rows |
+| `server/test/db/` | Migrations from an older schema (rows and ids kept) and seed-data integrity |
+| `client/test/` | Vitest + Testing Library in jsdom: API client, login/session, lessons, quiz |
+
+Each server test file runs against its own throwaway SQLite file in the OS temp dir; the suite refuses to start if Turso credentials are set. CI runs the same checks with coverage floors.
+
+So that a green run means something: no `.only`/`.skip`/`.todo` or snapshot tests (`scripts/check-tests.mjs` rejects them), every test must make an assertion, client tests fail on any request they didn't mock, and bug fixes start with a failing test. Don't loosen a test to make it pass. For Claude Code, `.claude/settings.json` adds a Stop hook that runs these checks and blocks finishing while they fail.
+
 ## Environment variables
 
 | Variable | Default | Notes |
@@ -149,7 +166,9 @@ npm start        # single server on :3001
 - [x] Spaced repetition - a daily "words due for review" queue instead of random shuffle
 - [x] CI pipeline - typecheck, tests and build on every push and pull request
 - [x] Unit tests for the learning logic (spaced repetition, streaks, quiz generation)
-- [ ] API integration tests, including database migrations
+- [x] API integration tests, including database migrations
+- [ ] Tests for the remaining client pages (Flashcards, Review, Dashboard, Vocabulary, Register)
+- [ ] Browser end-to-end tests against the real API
 - [ ] Audio pronunciation for every word
 - [ ] Tigrigna and English interface languages, so the platform serves more of the Horn of Africa community
 - [ ] Docker setup for one-command self-hosting
