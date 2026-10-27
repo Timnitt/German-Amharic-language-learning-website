@@ -138,12 +138,12 @@ npm start        # single server on :3001
 npm run verify   # test hygiene check, typecheck (incl. tests), all tests, build
 ```
 
-| Where | What |
-|---|---|
-| `server/test/unit/` | Pure logic: spaced repetition, streaks, quiz generation, validation, JWT config |
-| `server/test/api/` | Every endpoint over HTTP (`supertest` on `createApp()`), asserting status, body and DB rows |
-| `server/test/db/` | Migrations from an older schema (rows and ids kept) and seed-data integrity |
-| `client/test/` | Vitest + Testing Library in jsdom: API client, login/session, lessons, quiz |
+| Where | Tests | What |
+|---|---|---|
+| `server/test/unit/` | 24 | Pure logic: spaced repetition, streaks, quiz generation, validation, JWT config |
+| `server/test/api/` | 83 | Every endpoint over HTTP (`supertest` on `createApp()`), asserting status, body and DB rows, plus rate limits and security headers |
+| `server/test/db/` | 15 | Migrations from an older schema (rows and ids kept) and seed-data integrity |
+| `client/test/` | 100 | Vitest + Testing Library in jsdom: the API client, session handling, every page (loading, error and retry, 429 and 401 states), layout menu, theme toggle, error boundary and routing |
 
 Each server test file runs against its own throwaway SQLite file in the OS temp dir; the suite refuses to start if Turso credentials are set. CI runs the same checks with coverage floors.
 
@@ -167,7 +167,7 @@ So that a green run means something: no `.only`/`.skip`/`.todo` or snapshot test
 - [x] CI pipeline - typecheck, tests and build on every push and pull request
 - [x] Unit tests for the learning logic (spaced repetition, streaks, quiz generation)
 - [x] API integration tests, including database migrations
-- [ ] Tests for the remaining client pages (Flashcards, Review, Dashboard, Vocabulary, Register)
+- [x] Tests for the remaining client pages (Flashcards, Review, Dashboard, Vocabulary, Register)
 - [ ] Browser end-to-end tests against the real API
 - [ ] Audio pronunciation for every word
 - [ ] Tigrigna and English interface languages, so the platform serves more of the Horn of Africa community
