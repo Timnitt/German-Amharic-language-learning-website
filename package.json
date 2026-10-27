@@ -9,7 +9,9 @@
     "start": "npm run start -w server",
     "seed": "npm run seed -w server",
     "typecheck": "npm run typecheck -w server && npm run typecheck -w client",
-    "test": "npm run test -w server && npm run test -w client"
+    "test": "npm run test -w server && npm run test -w client",
+    "test:coverage": "npm run test:coverage -w server && npm run test:coverage -w client",
+    "verify": "node scripts/check-tests.mjs && npm run typecheck && npm test && npm run build"
   },
   "workspaces": [
     "client",

@@ -6,3 +6,6 @@ server/data/
 *.log
 .DS_Store
 prompts/
+coverage/
+# Local cache for the Claude Stop hook (last green code hash)
+.claude/verify-state.json
