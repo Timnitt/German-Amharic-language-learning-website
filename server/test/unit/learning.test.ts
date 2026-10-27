@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { buildQuizQuestions, computeStreaks, shuffle, sm2 } from '../src/learning.js'
-import type { VocabRow } from '../src/db.js'
+import { buildQuizQuestions, computeStreaks, shuffle, sm2 } from '../../src/learning.js'
+import type { VocabRow } from '../../src/db.js'
 
 // Deterministic stand-in for Math.random so shuffles are reproducible.
 function seededRandom(seed: number): () => number {

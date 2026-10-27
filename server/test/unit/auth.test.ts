@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { resolveJwtSecret } from '../src/auth.js'
+import { resolveJwtSecret } from '../../src/auth.js'
 
 const LONG = 'x'.repeat(32)
 
