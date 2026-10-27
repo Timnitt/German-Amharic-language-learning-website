@@ -6,3 +6,5 @@ server/data/
 *.log
 .DS_Store
 prompts/
+coverage/
+.claude/verify-state.json
