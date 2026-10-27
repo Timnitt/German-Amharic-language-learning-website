@@ -5,9 +5,6 @@ import { all, get, run } from '../../src/db.js'
 import { sm2 } from '../../src/learning.js'
 import { bearer, makeApp, registerUser, type TestUser } from '../helpers.js'
 
-// Endpoints that need a login: flashcard reviews (SM-2), due queue, streaks, lesson
-// completion, quiz results and the dashboard stats.
-
 let app: Express
 let wordIds: number[]
 let lessonId: number
@@ -35,7 +32,6 @@ function progressRow(u: TestUser, vocabId: number) {
   }>('SELECT * FROM progress WHERE user_id = ? AND vocab_id = ?', [u.user.id, vocabId])
 }
 
-/** Moves a word's next review into the past so it shows up as due. */
 function makeDue(u: TestUser, vocabId: number) {
   return run("UPDATE progress SET next_review = datetime('now', '-1 day') WHERE user_id = ? AND vocab_id = ?", [
     u.user.id,
@@ -63,8 +59,7 @@ describe('POST /api/progress/review', () => {
   it('stores SM-2 scheduling for a first correct answer', async () => {
     const u = await registerUser(app)
     const res = await review(u, wordIds[0], true)
-    // Literal values, so this can't just mirror a changed sm2(): new word, correct answer
-    // -> ease 2.5 + 0.1, due in 1 day, 1 repetition.
+    // New word, correct answer -> ease 2.6, due in 1 day, 1 repetition.
     const expected = { ease: 2.6, interval: 1, reps: 1 }
 
     expect(res.status).toBe(201)
@@ -326,7 +321,6 @@ describe('user isolation', () => {
     expect(stats.body).toMatchObject({ reviewed: 0, quizCount: 0, weakest: [] })
     expect(streak.body.todayReviews).toBe(0)
 
-    // Sanity check that Alice's data is really there, so the assertions above mean something.
     const aliceDue = await request(app).get('/api/progress/due').set(bearer(alice.token))
     expect(aliceDue.body.total).toBe(1)
   })

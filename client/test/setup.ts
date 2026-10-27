@@ -6,7 +6,6 @@ import { unexpectedFetches } from './helpers'
 beforeEach(() => {
   localStorage.clear()
   unexpectedFetches.length = 0
-  // A test that asserts nothing (e.g. a forgotten await) fails instead of passing silently.
   expect.hasAssertions()
 })
 

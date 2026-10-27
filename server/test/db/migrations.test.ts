@@ -4,10 +4,7 @@ import path from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createClient, type Client } from '@libsql/client'
 
-// db.ts migrates on import. These tests build a database with an older schema by hand,
-// then import db.ts against it and check the upgrade keeps every row.
-// db.js is imported dynamically (after vi.resetModules) so each test gets a fresh module
-// pointed at its own DATA_DIR.
+// db.ts migrates on import: build an old schema by hand, import db.js fresh, check rows survive.
 
 type DbModule = typeof import('../../src/db.js')
 
@@ -35,8 +32,7 @@ async function importDb(dir: string): Promise<DbModule> {
   return mod
 }
 
-// Schema as it was before spaced repetition and before B2: no SRS columns on progress,
-// and level CHECKs that stop at B1.
+// Old schema: no spaced-repetition columns, levels only up to B1.
 const LEGACY_SCHEMA = `
   CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -124,7 +120,6 @@ describe('db migrations', () => {
 
     const { all, run } = await importDb(dir)
 
-    // Spaced-repetition columns added; existing words are due right away.
     const progress = await all<Record<string, unknown>>('SELECT * FROM progress ORDER BY vocab_id')
     expect(progress).toEqual([
       {
@@ -151,7 +146,6 @@ describe('db migrations', () => {
       },
     ])
 
-    // Rebuilt tables keep ids, and rows that reference them were not cascade-deleted.
     const vocab = await all<{ id: number; german: string }>('SELECT id, german FROM vocabulary ORDER BY id')
     expect(vocab).toEqual([
       { id: 5, german: 'Haus' },
@@ -162,14 +156,12 @@ describe('db migrations', () => {
     const lessonProgress = await all('SELECT user_id, lesson_id, completed_at FROM lesson_progress')
     expect(lessonProgress).toEqual([{ user_id: 1, lesson_id: 3, completed_at: '2025-03-04 05:06:07' }])
 
-    // B2 is now accepted, anything else still rejected.
     await run("INSERT INTO vocabulary (german, amharic, level, category) VALUES ('Zukunft', 'ወደፊት', 'B2', 'x')")
     await run("INSERT INTO lessons (title, level, category, content) VALUES ('New', 'B2', 'x', 'c')")
     await expect(
       run("INSERT INTO vocabulary (german, amharic, level, category) VALUES ('Bad', 'x', 'C1', 'x')"),
     ).rejects.toThrow(/CHECK/)
 
-    // Foreign keys still enforced after the rebuild.
     const fk = await all('PRAGMA foreign_key_check')
     expect(fk).toEqual([])
   })

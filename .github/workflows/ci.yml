@@ -38,15 +38,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Fails on .only/.skip/.todo/snapshots in test files: they let tests pass without running.
       - name: Check test hygiene
         run: node scripts/check-tests.mjs
 
-      # Includes the test files (tsconfig.test.json in each workspace).
       - name: Typecheck
         run: npm run typecheck
 
-      # Server tests use a temp SQLite DB per file; TURSO_* stay empty so they can never reach Turso.
       - name: Test with coverage thresholds
         run: npm run test:coverage
         env:

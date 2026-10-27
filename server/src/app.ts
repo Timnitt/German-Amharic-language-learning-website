@@ -16,11 +16,7 @@ import { lessonRouter } from './routes/lessonRoutes.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const clientDist = process.env.CLIENT_DIST || path.resolve(__dirname, '../../client/dist')
 
-// The SPA's index.html runs one inline script (the pre-paint theme switcher). A strict
-// CSP blocks inline scripts, so hash the script that is actually served and allow exactly
-// that hash - no 'unsafe-inline'. Reading the built file keeps the hash correct even if the
-// bundler rewrites the script. In dev this server only serves the API (Vite serves the HTML),
-// so there is nothing to hash.
+// CSP allows only the hash of index.html's inline theme script, no 'unsafe-inline'.
 function inlineScriptHashes(distDir: string): string[] {
   try {
     const html = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8')
@@ -35,9 +31,7 @@ function inlineScriptHashes(distDir: string): string[] {
   }
 }
 
-// Log the full error (stack, DB text) server-side only. The client always gets a generic
-// message in production; outside production the message is included to aid local debugging,
-// but never the stack trace.
+// Full errors are logged server-side only; clients never get the stack trace.
 export function errorHandler(
   err: Error,
   _req: express.Request,
@@ -53,20 +47,16 @@ export function errorHandler(
 }
 
 export interface AppOptions {
-  /** Max login/register attempts per IP per 15 minutes. */
   authLimit?: number
-  /** Max API requests per IP per 15 minutes. */
   apiLimit?: number
 }
 
-// Builds the Express app without seeding or listening, so tests can drive it in-process.
+// No seeding or listen() here, so tests can use the app directly.
 export function createApp(opts: AppOptions = {}): Express {
   const app = express()
-  // Render (and most hosts) put the app behind one reverse proxy. Trust a single hop so
-  // express-rate-limit keys on the real client IP from X-Forwarded-For, not the proxy's.
+  // One proxy hop on Render, so rate limits see the real client IP.
   app.set('trust proxy', 1)
 
-  // Tight limiter for credential endpoints to blunt brute-force / credential-stuffing.
   const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: opts.authLimit ?? 10,
@@ -75,7 +65,6 @@ export function createApp(opts: AppOptions = {}): Express {
     message: { error: 'Too many attempts. Please try again in a few minutes.' },
   })
 
-  // Looser limiter for the rest of the API as a general abuse backstop.
   const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: opts.apiLimit ?? 300,
@@ -101,9 +90,7 @@ export function createApp(opts: AppOptions = {}): Express {
     }),
   )
 
-  // CORS allowlist from CORS_ORIGINS (comma-separated). In production the SPA is served
-  // from the same origin as the API, so the default is an empty allowlist (CORS disabled).
-  // In dev the Vite dev server runs on a different origin, so default to it.
+  // Production serves the SPA from the same origin, so CORS is off unless CORS_ORIGINS is set.
   const corsOrigins = (
     process.env.CORS_ORIGINS ??
     (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5173')
@@ -119,7 +106,6 @@ export function createApp(opts: AppOptions = {}): Express {
     res.json({ status: 'ok', uptime: process.uptime() })
   })
 
-  // Stricter limit on the two credential endpoints; looser limit on everything else under /api.
   app.use('/api/auth/login', authLimiter)
   app.use('/api/auth/register', authLimiter)
   app.use('/api', apiLimiter)

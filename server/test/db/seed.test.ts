@@ -5,8 +5,7 @@ import { seedDatabase } from '../../src/seed.js'
 import { lessons, vocabulary } from '../../src/seedData.js'
 import { LEVELS } from '../../src/validation.js'
 
-// Seeding matches existing rows by german word / lesson title, so duplicates in
-// seedData.ts would be silently dropped. These checks keep the content honest.
+// Seeding silently skips duplicate words/titles, so catch them here.
 
 describe('seedData content', () => {
   it('has the amount of content the README promises', () => {

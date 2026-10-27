@@ -4,8 +4,6 @@ import type { Express } from 'express'
 import { all, get } from '../../src/db.js'
 import { makeApp } from '../helpers.js'
 
-// Public read endpoints: vocabulary, quiz generation, lessons. No login needed.
-
 let app: Express
 
 beforeAll(async () => {
