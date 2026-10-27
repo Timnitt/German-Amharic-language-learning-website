@@ -82,7 +82,6 @@ describe('toAmharicError', () => {
     [new ApiError(500, 'secret detail'), 'የአገልግሎት ችግር አጋጥሟል። እባክዎ ቆይተው እንደገና ይሞክሩ።'],
     [new ApiError(503, ''), 'የአገልግሎት ችግር አጋጥሟል። እባክዎ ቆይተው እንደገና ይሞክሩ።'],
     [new ApiError(401, ''), 'ኢሜይል ወይም የይለፍ ቃል ትክክል አይደለም፣ ወይም ክፍለ-ጊዜዎ አብቅቷል። እባክዎ ይግቡ።'],
-    // The server's English 401 text is replaced, not shown.
     [new ApiError(401, 'Invalid email or password'), 'ኢሜይል ወይም የይለፍ ቃል ትክክል አይደለም፣ ወይም ክፍለ-ጊዜዎ አብቅቷል። እባክዎ ይግቡ።'],
     [new ApiError(400, 'Password must be at least 8 characters'), 'Password must be at least 8 characters'],
     [new ApiError(404, ''), 'ስህተት ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።'],

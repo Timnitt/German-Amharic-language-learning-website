@@ -1,13 +1,6 @@
 #!/usr/bin/env node
-// Claude Code Stop hook: runs the test gate before Claude may end a turn.
-// Wired up in .claude/settings.json. Exit 2 blocks the stop and feeds stderr back to Claude.
-//
-// - Skips when the code (client/, server/, scripts/, package files) is the same as at the
-//   last green run, so doc-only turns and repeat turns cost nothing.
-// - Runs check-tests, typecheck and tests (build is left to CI for speed).
-// - Never touches the live DB: TURSO_* are forced empty.
-// - Blocks at most MAX_BLOCKS times per session for the same failure, then lets Claude stop
-//   and warns the user instead, so a stuck fix can't loop forever.
+// Claude Code Stop hook: runs the test gate if code changed since the last green run.
+// Exit 2 blocks the stop; gives up after MAX_BLOCKS attempts per session.
 
 import { execSync, spawnSync } from 'node:child_process'
 import crypto from 'node:crypto'
@@ -32,7 +25,6 @@ function git(args) {
   return execSync(`git ${args}`, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
 }
 
-/** Hash of the current code: tracked blobs + uncommitted diff + untracked files. */
 function codeKey() {
   const paths = CODE_PATHS.join(' ')
   const h = crypto.createHash('sha256')

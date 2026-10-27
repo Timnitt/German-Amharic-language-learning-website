@@ -4,13 +4,11 @@ export default defineConfig({
   test: {
     include: ['test/**/*.test.ts'],
     setupFiles: ['test/setup.ts'],
-    // server/.env holds the production Turso credentials. dotenv never overrides variables
-    // that are already set, so blanking them here keeps tests off the live database.
+    // Blank the production Turso credentials from server/.env so tests stay local.
     env: {
       TURSO_DATABASE_URL: '',
       TURSO_AUTH_TOKEN: '',
     },
-    // Guards against a suite that passes for the wrong reasons.
     allowOnly: false,
     passWithNoTests: false,
     retry: 0,
@@ -18,14 +16,11 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**'],
-      // Content data and the listen() entry point would only inflate the numbers.
       exclude: ['src/seedData.ts', 'src/index.ts'],
       reporter: ['text-summary', 'html'],
-      // Floors just under the measured baseline: raise them as coverage grows, never lower
-      // them to get a change through.
+      // Coverage floors: raise them, never lower them.
       thresholds: { lines: 95, statements: 95, branches: 90, functions: 90 },
     },
-    // bcrypt + seeding ~1000 rows per file; generous but finite.
     testTimeout: 20000,
     hookTimeout: 30000,
   },

@@ -3,7 +3,6 @@ import type { Express } from 'express'
 import { seedDatabase } from '../src/seed.js'
 import { createApp, type AppOptions } from '../src/app.js'
 
-/** Seeds this test file's temp database and builds an app with a high auth limit. */
 export async function makeApp(opts: AppOptions = {}): Promise<Express> {
   await seedDatabase()
   return createApp({ authLimit: 1000, apiLimit: 10000, ...opts })
@@ -18,7 +17,6 @@ export interface TestUser {
   password: string
 }
 
-/** Registers a fresh user through the real endpoint and returns its token. */
 export async function registerUser(app: Express, name = 'Test User'): Promise<TestUser> {
   userCounter++
   const email = `user${userCounter}-${Date.now()}@example.com`

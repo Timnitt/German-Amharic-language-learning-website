@@ -1,11 +1,5 @@
 #!/usr/bin/env node
-// Fails if any test file focuses, skips or stubs out tests, or uses snapshots.
-// These make a suite go green without actually checking anything:
-//   .only   -> every other test silently stops running
-//   .skip / .todo / xit / xdescribe -> a test is switched off
-//   toMatchSnapshot -> "fixed" by regenerating the snapshot
-// Vitest's allowOnly:false already rejects .only; this catches the rest, in CI and in the
-// Claude Stop hook.
+// Rejects .only/.skip/.todo/xit/xdescribe and snapshots in test files.
 
 import fs from 'node:fs'
 import path from 'node:path'

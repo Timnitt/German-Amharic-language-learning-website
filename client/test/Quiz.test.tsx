@@ -5,8 +5,7 @@ import { setToken } from '../src/api'
 import type { QuizQuestion, User } from '../src/types'
 import { mockFetch, renderPage } from './helpers'
 
-// Fake timers because the quiz waits 1.1s after each answer. fireEvent (not userEvent)
-// keeps clicks synchronous under fake timers.
+// Fake timers: the quiz waits 1.1s after each answer.
 
 const user: User = { id: 1, name: 'Abebe', email: 'a@example.com', createdAt: '2026-01-01' }
 
@@ -43,13 +42,11 @@ describe('Quiz', () => {
     await startQuiz()
     expect(fetchMock.calls.map((c) => c.key)).toEqual(['GET /api/quiz?level=A2&count=10'])
 
-    // Q1: correct answer.
     fireEvent.click(screen.getByRole('button', { name: 'ቤት' }))
     expect(screen.getByRole('status')).toHaveTextContent('ትክክል')
     expect(screen.getByText('ነጥብ፦ 1')).toBeInTheDocument()
     await flush()
 
-    // Q2: wrong answer; the right one is still revealed.
     expect(screen.getByRole('heading', { name: 'ውሃ' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Brot' }))
     expect(screen.getByRole('status')).toHaveTextContent('ስህተት')
