@@ -73,6 +73,40 @@ describe('rate limiting', () => {
     }
     expect((await request(defaults).post('/api/auth/login').send(body)).status).toBe(429)
   })
+
+  it('keeps a separate bucket per client IP behind the proxy', async () => {
+    const limited = createApp({ authLimit: 1 })
+    const body = { email: 'nobody@example.com', password: 'wrong1234' }
+    const login = (ip: string) =>
+      request(limited).post('/api/auth/login').set('X-Forwarded-For', ip).send(body)
+
+    expect((await login('203.0.113.1')).status).toBe(401)
+    expect((await login('203.0.113.1')).status).toBe(429)
+    expect((await login('203.0.113.2')).status).toBe(401)
+  })
+
+  it('limits public API routes with a JSON error and RateLimit headers', async () => {
+    const limited = createApp({ apiLimit: 2 })
+    for (let i = 0; i < 2; i++) {
+      expect((await request(limited).get('/api/lessons')).status).toBe(200)
+    }
+    const res = await request(limited).get('/api/lessons')
+    expect(res.status).toBe(429)
+    expect(res.headers['content-type']).toMatch(/application\/json/)
+    expect(res.body).toEqual({ error: 'Too many requests. Please slow down.' })
+    expect(res.headers['ratelimit-limit']).toBe('2')
+    expect(res.headers['ratelimit-remaining']).toBe('0')
+    expect(Number(res.headers['ratelimit-reset'])).toBeGreaterThan(0)
+    expect(res.headers['x-ratelimit-limit']).toBeUndefined()
+  })
+
+  it('does not count /api/health against the API limit', async () => {
+    const limited = createApp({ apiLimit: 1 })
+    for (let i = 0; i < 3; i++) {
+      expect((await request(limited).get('/api/health')).status).toBe(200)
+    }
+    expect((await request(limited).get('/api/lessons')).status).toBe(200)
+  })
 })
 
 describe('errorHandler', () => {

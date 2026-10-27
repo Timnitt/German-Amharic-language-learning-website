@@ -240,6 +240,10 @@ describe('quiz results', () => {
     [{ level: 'A1', score: 1, total: 0 }],
     [{ level: 'A1', score: 1, total: 51 }],
     [{ level: 'C2', score: 1, total: 10 }],
+    [{ level: 'A1', score: 1.5, total: 10 }],
+    [{ level: 'A1', score: '3', total: 10 }],
+    [{ level: 'A1', score: 3, total: 10.5 }],
+    [{ level: 'A1', score: 3 }],
   ])('rejects invalid result %j with 400', async (body) => {
     const u = await registerUser(app)
     const res = await request(app).post('/api/quiz/submit').set(bearer(u.token)).send(body)

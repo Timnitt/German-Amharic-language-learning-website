@@ -52,6 +52,22 @@ describe('GET /api/vocabulary', () => {
     expect(res.body).toEqual({ items: [], total: 0 })
   })
 
+  it('ignores an unknown level instead of filtering by it', async () => {
+    const everything = await request(app).get('/api/vocabulary')
+    const bad = await request(app).get('/api/vocabulary').query({ level: 'C1' })
+    expect(bad.status).toBe(200)
+    expect(bad.body.total).toBe(everything.body.total)
+  })
+
+  it('caps an over-long search instead of failing', async () => {
+    const word = (await get<{ german: string }>('SELECT german FROM vocabulary ORDER BY id LIMIT 1'))!
+    const res = await request(app)
+      .get('/api/vocabulary')
+      .query({ search: word.german + 'x'.repeat(5000), category: 'y'.repeat(5000) })
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual({ items: [], total: 0 })
+  })
+
   it('treats search text as data, not SQL', async () => {
     const res = await request(app).get('/api/vocabulary').query({ search: "' OR 1=1 --" })
     expect(res.status).toBe(200)
@@ -126,9 +142,33 @@ describe('GET /api/quiz', () => {
     expect(res.body.questions).toHaveLength(expected)
   })
 
-  it('rejects an invalid level', async () => {
-    const res = await request(app).get('/api/quiz?level=C1')
+  it('falls back to 10 questions for a non-numeric count', async () => {
+    const res = await request(app).get('/api/quiz').query({ count: 'abc' })
+    expect(res.status).toBe(200)
+    expect(res.body.questions).toHaveLength(10)
+  })
+
+  it.each(['C1', 'a1', ''])('rejects invalid level %j with 400', async (level) => {
+    const res = await request(app).get('/api/quiz').query({ level })
     expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/Invalid level/)
+  })
+
+  it('gives every question 4 distinct options with exactly one correct answer, every run', async () => {
+    const words = await all<{ id: number; german: string; amharic: string }>(
+      "SELECT id, german, amharic FROM vocabulary WHERE level = 'B1'",
+    )
+    const byId = new Map(words.map((w) => [w.id, w]))
+    for (let run = 0; run < 5; run++) {
+      const res = await request(app).get('/api/quiz').query({ level: 'B1', count: 20 })
+      for (const q of res.body.questions) {
+        const w = byId.get(q.vocabId)!
+        const correct = q.direction === 'de-am' ? w.amharic : w.german
+        expect(new Set(q.options).size).toBe(4)
+        expect(q.options.filter((o: string) => o === correct)).toHaveLength(1)
+        expect(q.options[q.answer]).toBe(correct)
+      }
+    }
   })
 })
 
