@@ -178,7 +178,7 @@ export default function Review() {
                 )}
                 {card.example_de && (
                   <span className="mt-4 text-sm text-gray-300 italic text-center">
-                    „{card.example_de}"
+                    „{card.example_de}“
                   </span>
                 )}
               </div>
