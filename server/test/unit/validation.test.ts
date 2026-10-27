@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { levelSchema, passwordSchema } from '../src/validation.js'
+import { levelSchema, passwordSchema } from '../../src/validation.js'
 
 describe('levelSchema', () => {
   it('accepts the four CEFR levels', () => {
