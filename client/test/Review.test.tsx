@@ -74,6 +74,12 @@ describe('Review', () => {
     expect(screen.getByText('ቤት', { selector: '.sr-only' })).toBeInTheDocument()
   })
 
+  it('shows the example sentence in German quotation marks', async () => {
+    loggedIn({ body: { items: [{ ...queue[0], example_de: 'Das Haus ist groß.' }], total: 1 } })
+    renderReview()
+    expect(await screen.findByText('„Das Haus ist groß.“')).toBeInTheDocument()
+  })
+
   it('does not mention more words when the whole queue was reviewed', async () => {
     loggedIn({ body: { items: [queue[0]], total: 1 } })
     renderReview()
